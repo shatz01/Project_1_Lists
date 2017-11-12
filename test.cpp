@@ -1,11 +1,10 @@
 
 #include <iostream>
 // #include "SSLL.h"
-// #include "SDAL.h"
+#include "SDAL.h"
 // #include "PSLL.h"
-#include "CDAL.h"
+// #include "CDAL.h"
 // #include "CBL.h"
-#include <vector>
 using namespace cop3530;
 
 template <typename D>
@@ -16,19 +15,25 @@ bool comparison_fn(D a, D b) {
 
 int main()
 {
-  CDAL<int> list;
-  // list.push_front(5);
-  // list.push_front(4);
-  // list.push_front(3);
-  // list.push_front(2);
-  // list.push_front(1);
-  // list.pop_front();
+
+  SDAL<int> list;
+  list.push_front(5);
+  list.push_front(4);
+  list.push_front(3);
+  list.push_back(2);
+  list.push_back(1);
+  list.pop_front();
   // list.pop_back();
 
-  for (int i = 0; i < 50; ++i)
-  {
-    list.push_back(12);
-  }
+  list.print(std::cout);
+  std::cout << std::endl;
+
+  // std::cout << list.item_at() << std::endl;
+
+  // for (int i = 0; i < 50; ++i)
+  // {
+  //   list.push_back(12);
+  // }
 
   // list.print(std::cout);
 

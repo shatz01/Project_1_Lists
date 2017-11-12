@@ -12,11 +12,11 @@ struct Node
 };
 
 template <typename E>
-class Ssll : public List<E>
+class SSLL : public List<E>
 {
 public:
-  Ssll();
-  ~Ssll();
+  SSLL();
+  ~SSLL();
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -109,18 +109,18 @@ public:
   const_iterator begin() const { return iterator(head)/* const_iterator denoting first element */; }
   const_iterator end() const { return iterator(tail->next)/* const_iterator denoting 1 past the last element */; }
 
-}; // end ssll class definition
+}; // end SSLL class definition
 
 /// --- FUNCTIONS --- ///
 // --- constructor --- ///
 template <typename E>
-Ssll<E>::Ssll()
+SSLL<E>::SSLL()
 {
   head = NULL;
   tail = NULL;
 }
 template <typename E>
-Ssll<E>::~Ssll()
+SSLL<E>::~SSLL()
 {
   while(head){
     Node<E> *prev = head;
@@ -132,7 +132,7 @@ Ssll<E>::~Ssll()
 
 // --- push_front --- //
 template <typename E>
-void Ssll<E>::push_front(E elt)
+void SSLL<E>::push_front(E elt)
 {
 
   if (is_empty())
@@ -152,7 +152,7 @@ void Ssll<E>::push_front(E elt)
 
 // --- push_back --- //
 template <typename E>
-void Ssll<E>::push_back(E elt)
+void SSLL<E>::push_back(E elt)
 {
   if (is_empty())
   {
@@ -171,7 +171,7 @@ void Ssll<E>::push_back(E elt)
 
 // --- length --- //
 template <typename E>
-int Ssll<E>::length()
+int SSLL<E>::length()
 {
   int len = 0;
   Node<E> *temp = new Node<E>;
@@ -187,7 +187,7 @@ int Ssll<E>::length()
 
 // --- contents -- //
 template <typename E>
-E* Ssll<E>::contents()
+E* SSLL<E>::contents()
 {
   if (is_empty())
   {
@@ -211,18 +211,18 @@ E* Ssll<E>::contents()
 
 // -- is_empty -- //
 template <typename E>
-bool Ssll<E>::is_empty()
+bool SSLL<E>::is_empty()
 {
   return(head == NULL && tail == NULL);
 }
 
 // --- pop_front --- //
 template <typename E>
-E Ssll<E>::pop_front()
+E SSLL<E>::pop_front()
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>.pop_front(): empty list");
+    throw std::runtime_error("SSLL<E>.pop_front(): empty list");
   } else {
     Node<E> *temp = new Node<E>;
     temp = head;
@@ -233,11 +233,11 @@ E Ssll<E>::pop_front()
 
 // --- pop_back --- //
 template <typename E>
-E Ssll<E>::pop_back()
+E SSLL<E>::pop_back()
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>.pop_back(): empty list");
+    throw std::runtime_error("SSLL<E>.pop_back(): empty list");
   } else {
     Node<E> *temp = new Node<E>;
     temp = tail;
@@ -254,11 +254,11 @@ E Ssll<E>::pop_back()
 
 // --- peek_front --- //
 template <typename E>
-E Ssll<E>::peek_front()
+E SSLL<E>::peek_front()
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>.peek_front(): empty list");
+    throw std::runtime_error("SSLL<E>.peek_front(): empty list");
   } else {
     return head->data;
   }
@@ -266,11 +266,11 @@ E Ssll<E>::peek_front()
 
 // --- peek_back --- //
 template <typename E>
-E Ssll<E>::peek_back()
+E SSLL<E>::peek_back()
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>.peek_front(): empty list");
+    throw std::runtime_error("SSLL<E>.peek_front(): empty list");
   } else {
     return tail->data;
   }
@@ -278,14 +278,14 @@ E Ssll<E>::peek_back()
 
 // --- is_full --- //
 template <typename E>
-bool Ssll<E>::is_full()
+bool SSLL<E>::is_full()
 {
   return false;
 }
 
 // --- clear --- //
 template <typename E>
-void Ssll<E>::clear()
+void SSLL<E>::clear()
 {
   head = NULL;
   tail = NULL;
@@ -293,13 +293,13 @@ void Ssll<E>::clear()
 
 // --- item_at --- //
 template <typename E>
-E Ssll<E>::item_at(int pos)
+E SSLL<E>::item_at(int pos)
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>::item_at(): list empty");
+    throw std::runtime_error("SSLL<E>::item_at(): list empty");
   } else if (pos < 0 || pos > length()-1) {
-    throw std::runtime_error("Ssll<E>::item_at(): index not in domain");
+    throw std::runtime_error("SSLL<E>::item_at(): index not in domain");
   } else {
     // assuming 0-indexed
 
@@ -317,11 +317,11 @@ E Ssll<E>::item_at(int pos)
 
 // --- remove --- //
 template <typename E>
-E Ssll<E>::remove(int pos)
+E SSLL<E>::remove(int pos)
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>::remove(): list empty");
+    throw std::runtime_error("SSLL<E>::remove(): list empty");
   } else if (pos >= 0 && pos < length()){
     if (pos == 0){
       return pop_front();
@@ -346,20 +346,20 @@ E Ssll<E>::remove(int pos)
       return during->data;
     }
   } else {
-    throw std::runtime_error("Ssll<E>::remove(): index not in domain");
+    throw std::runtime_error("SSLL<E>::remove(): index not in domain");
   }
 }
 
 // --- insert --- //
 template <typename E>
-void Ssll<E>::insert(E elt, int pos)
+void SSLL<E>::insert(E elt, int pos)
 {
 
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>::insert(): list empty");
+    throw std::runtime_error("SSLL<E>::insert(): list empty");
   } else if (pos < 0 || pos > length()-1) {
-    throw std::runtime_error("Sssll<E>::insert(): index not in domain");
+    throw std::runtime_error("SSSLL<E>::insert(): index not in domain");
   } else {
     if (pos == 0) {
       push_front(elt);
@@ -385,13 +385,13 @@ void Ssll<E>::insert(E elt, int pos)
 
 // --- replace --- //
 template <typename E>
-E Ssll<E>::replace(E elt, int pos)
+E SSLL<E>::replace(E elt, int pos)
 {
   if (is_empty())
   {
-    throw std::runtime_error("Ssll<E>::replace(E elt, int pos): list empty");
+    throw std::runtime_error("SSLL<E>::replace(E elt, int pos): list empty");
   } else if (pos < 0 || pos > length()-1){
-    throw std::runtime_error("Ssll<E>::replace(E elt, int pos): index out of domain");
+    throw std::runtime_error("SSLL<E>::replace(E elt, int pos): index out of domain");
   } else {
     if (pos == 0)
     {
@@ -412,7 +412,7 @@ E Ssll<E>::replace(E elt, int pos)
 
 // --- print --- //
 template <typename E>
-std::ostream& Ssll<E>::print(std::ostream &out)
+std::ostream& SSLL<E>::print(std::ostream &out)
 {
     if(is_empty())
     {
@@ -435,7 +435,7 @@ std::ostream& Ssll<E>::print(std::ostream &out)
 
 // --- contains --- //
 template <typename E>
-bool Ssll<E>::contains(E elt, bool (*equals_fn)(E a, E b))
+bool SSLL<E>::contains(E elt, bool (*equals_fn)(E a, E b))
 {
   if (is_empty())
   {

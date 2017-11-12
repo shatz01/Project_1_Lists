@@ -160,7 +160,6 @@ template <typename E>
 CDAL<E>::~CDAL()
 {
   while(head_node){
-    std::cout << "deleted something!" << std::endl;
     Node<E> *previous = head_node;
     head_node = head_node->next;
     delete [] previous->data;
@@ -540,8 +539,7 @@ void CDAL<E>::shift_right_from(int index)
 template <typename E>
 int CDAL<E>::num_nodes()
 {
-  Node<E> *temp = new Node<E>;
-  temp = head_node;
+  Node<E> *temp = head_node;
   int i = 0;
   while(temp != nullptr){
     i++;

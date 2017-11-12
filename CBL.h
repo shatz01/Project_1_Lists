@@ -141,33 +141,7 @@ public:
 
 }; // end CBL class definition
 
-// --- default constructor --- //
-template <typename E>
-CBL<E>::CBL()
-{
-  head = 0;
-  tail = 0;
-  mx_sz = 50;
-  data = new E[mx_sz + 1];
 
-}
-template <typename E>
-CBL<E>::~CBL()
-{
-  delete [] data;
-}
-
-
-// --- specified constructor --- //
-template <typename E>
-CBL<E>::CBL(int sz)
-{
-  head = 0;
-  tail = 0;
-  mx_sz = sz;
-  data = new E[mx_sz + 1];
-
-}
 
 // --- print_full --- //
 template <typename E>
