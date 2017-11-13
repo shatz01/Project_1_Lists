@@ -32,15 +32,14 @@ public:
   bool is_full();
   void clear();
   std::ostream& print(std::ostream &out);
-  // // bool contains(E elt); // fix this to make it take a function arg too
   E* contents(); // should return an array
+  bool contains(E elt, bool (*equals_fn)(E a, E b));
+private:
   void print_contents(); // prints the array returned from contents
   void print_free(); // prints the free list from 0 to the number of nodes in free list minus 1
   bool free_is_empty();
   int free_length ();
   Node<E> pop_free();
-  bool contains(E elt, bool (*equals_fn)(E a, E b));
-private:
   Node<E> *head;
   Node<E> *tail;
   Node<E> *free_head;
@@ -308,27 +307,35 @@ E PSLL<E>::pop_front()
   {
     throw std::runtime_error("E PSLL<E>::pop_front(): list empty");
   } else {
-    Node<E> *temp = new Node<E>;
-    temp = head;
+    E return_this;
+    Node<E> *temp = head;
     head = head->next;
-    temp->next = free_head;
-    free_head = temp;
-    E data = free_head->data;
-
-    if (length() >= 100 && (free_length() > length()/2))
+    if (free_length() < 50)
     {
-      // reduce number of pool nodes to half list size by deallocation
-      int half_list_sz = length()/2;
-
-      while (free_length() > half_list_sz)
-      {
-        Node<E> *temp = new Node<E>;
-        temp = free_head;
-        free_head = free_head->next;
-        delete temp;
-      }
+      temp->next = free_head;
+      free_head = temp;
+      return_this = free_head->data;
+    } else {
+      return_this = temp->data;
+      delete temp;
     }
-    return data;
+
+    // PRETTY SURE I DONT NEED ANY OF THIS ANYMORE SINCE NOW LENGTH OF FREE LIST WONT EXCEED 50.
+    // code below is depreciated
+    // if (length() >= 100 && (free_length() > length()/2))
+    // {
+    //   // reduce number of pool nodes to half list size by deallocation
+    //   int half_list_sz = length()/2;
+    //
+    //   while (free_length() > half_list_sz)
+    //   {
+    //     Node<E> *temp = new Node<E>;
+    //     temp = free_head;
+    //     free_head = free_head->next;
+    //     delete temp;
+    //   }
+    // }
+    return return_this;
   }
 }
 
@@ -341,14 +348,20 @@ E PSLL<E>::pop_back()
     throw std::runtime_error("E PSLL<E>::pop_back(): list empty");
   } if (length() == 1) {
     E data = head->data;
-    head->next = free_head;
-    free_head = head;
+    if (free_length() < 50)
+    {
+      head->next = free_head;
+      free_head = head;
+    } else {
+      delete head;
+    }
     head = nullptr;
     tail = nullptr;
     return data;
   }
 
   else {
+    E return_this;
     // Node<E> *temp = new Node<E>;
     // temp = head;
     // head = head->next;
@@ -356,10 +369,8 @@ E PSLL<E>::pop_back()
     // free_head = temp;
 
 
-    Node<E> *temp = new Node<E>;
-    temp = tail;
-    Node<E> *temp2 = new Node<E>;
-    temp2 = head;
+    Node<E> *temp = tail;
+    Node<E> *temp2 = head;
 
     while (temp2->next != tail)
     {
@@ -367,25 +378,33 @@ E PSLL<E>::pop_back()
     }
     tail = temp2;
 
-    temp->next = free_head;
-    free_head = temp;
-
-    E data = free_head->data;
-
-    if (length() >= 100 && (free_length() > length()/2))
+    if (free_length() < 50 )
     {
-      // reduce number of pool nodes to half list size by deallocation
-      int half_list_sz = length()/2;
-
-      while (free_length() > half_list_sz)
-      {
-        Node<E> *temp = new Node<E>;
-        temp = free_head;
-        free_head = free_head->next;
-        delete temp;
-      }
+      temp->next = free_head;
+      free_head = temp;
+      return_this = free_head->data;
+    } else {
+      return_this = temp->data;
+      delete temp;
     }
-    return data;
+
+
+    // PRETTY SURE I DONT NEED ANY OF THIS ANYMORE SINCE NOW LENGTH OF FREE LIST WONT EXCEED 50.
+    // code below is depreciated
+    // if (length() >= 100 && (free_length() > length()/2))
+    // {
+    //   // reduce number of pool nodes to half list size by deallocation
+    //   int half_list_sz = length()/2;
+    //
+    //   while (free_length() > half_list_sz)
+    //   {
+    //     Node<E> *temp = new Node<E>;
+    //     temp = free_head;
+    //     free_head = free_head->next;
+    //     delete temp;
+    //   }
+    // }
+    return return_this;
   }
 
 }
@@ -603,9 +622,16 @@ E PSLL<E>::remove(int pos)
         curr_pos++;
       }
       before->next = after;
-      during->next = free_head;
-      free_head = during;
-      return free_head->data;
+      E return_this = during->data;
+      if (free_length() < 50)
+      {
+        during->next = free_head;
+        free_head = during;
+      } else {
+        delete during;
+      }
+
+      return return_this;
     }
   }
 }
@@ -615,15 +641,21 @@ E PSLL<E>::remove(int pos)
 template <typename E>
 void PSLL<E>::clear()
 {
-  if (is_empty())
+  while(head)
   {
-    return;
-  } else {
-    tail->next = free_head;
-    free_head = head;
-    head = nullptr;
-    tail = nullptr;
+    Node<E> *prev = head;
+    head = head->next;
+    delete prev;
   }
+  while (free_head)
+  {
+    Node<E> *prev_free = free_head;
+    free_head = free_head->next;
+    delete prev_free;
+  }
+  head = nullptr;
+  tail = nullptr;
+  free_head = nullptr;
 }
 
 // --- print --- //

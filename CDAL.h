@@ -1,6 +1,6 @@
 #ifndef _CDAL_H_
 #define _CDAL_H_
-// Ferbie
+
 #include "list.h"
 #include <stdexcept>
 
@@ -33,8 +33,11 @@ public:
   int length();
   bool is_empty();
   bool is_full();
-  void clear();
-  E* contents(); // should return an array
+  void clear(); ///
+  E* contents();
+  std::ostream& print(std::ostream &out);
+  bool contains(E elt, bool (*equals_fn)(E a, E b));
+private:
   void print_contents(); // prints the array returned from contents
   Node<E>* node_at(int index);
   int num_nodes();
@@ -43,9 +46,6 @@ public:
   void shift_right_from(int index);
   void delete_half();
   int total_nodes();
-  std::ostream& print(std::ostream &out);
-  bool contains(E elt, bool (*equals_fn)(E a, E b));
-private:
   Node<E> *head_node;
   int head;
   int tail;
@@ -344,16 +344,30 @@ E CDAL<E>::remove(int pos)
   }
   --tail;
 
-  if (num_nodes()/2 > (tail/50 + 1))
+  if (num_nodes() >= (((tail + 1)/50)+2) )
   {
-    // deallocate half of nodes from end of list
-    delete_half();
+    // find last node
+    Node<E> *curr = head_node;
+    while(curr->next != nullptr)
+    {
+      curr = curr->next;
+    } // now curr is at the last node in CDAL
+
+    (curr->prev)->next = nullptr;
+    delete [] curr->data;
+    delete curr;
   }
+  // CODE BELOW IS DEPRECIATED
+  // if (num_nodes()/2 > (tail/50 + 1))
+  // {
+  //   // deallocate half of nodes from end of list
+  //   delete_half();
+  // }
 
   return removed;
 }
 
-// --- delete_half --- //
+// --- delete_half --- // DEPRECIATED
 template <typename E>
 void CDAL<E>::delete_half()
 {

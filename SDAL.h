@@ -15,13 +15,17 @@ public:
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
+  E replace(E elt, int pos);
   E pop_front();
   E pop_back();
+  E remove(int pos);
   E peek_front();
   E peek_back();
   E item_at(int pos);
+  int length();
   bool is_empty();
   bool is_full();
+  void clear();
   std::ostream& print(std::ostream &out);
 private:
   void shift_and_expand();
@@ -29,10 +33,88 @@ private:
   void shrink();
   void shift();
   void shift_left();
+  void shift_left_from(int pos);
+  void shift_right_from(int pos);
   int tail;
   int mx_sz;
   int initial_mx_sz;
   E *data;
+
+public:
+  // ITERATOR CLASS
+  template <typename DataT>
+  class SDAL_Iter
+  {
+    // type aliases required for C++ iterator compatibility
+    using value_type = DataT;
+    using reference = DataT&;
+    using pointer = DataT*;
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::forward_iterator_tag;
+    // type aliases for prettier code
+    using self_type = SDAL_Iter;
+    using self_reference = SDAL_Iter&;
+
+  private:
+    DataT* here;
+
+  public:
+    explicit SDAL_Iter( DataT* start) : here( start ){}
+    SDAL_Iter( const SDAL_Iter& src) : here( src.here ){}
+
+    reference operator*() const {
+      return *here;
+    }
+
+    pointer operator->() const {
+      return &(operator*());
+    }
+
+    self_reference operator=( SDAL_Iter<DataT> const& src ) {
+      if (this == &src) {
+        return *this;
+      }
+      here = src;
+      return *this;
+    }
+
+    self_reference operator++() {
+      here = here + 1;
+      return *this;
+    } // preincrement
+
+    self_type operator++(int) {
+      iterator preincremented = *this;
+      here = here + 1;
+      return preincremented;
+    } // postincrement
+
+    bool operator==( SDAL_Iter<DataT> const& rhs ) const {
+      return here == rhs.here;
+    }
+
+    bool operator!=( SDAL_Iter<DataT> const& rhs) const {
+      return here != rhs.here;
+    }
+
+  };// end ITERATOR class
+
+public:
+  // type aliases for prettier code:
+  using iterator = SDAL_Iter<E>;
+  using const_iterator = SDAL_Iter<E const>;
+
+  // iterators over a non-const List
+  iterator begin() { return iterator(data); /* iterator denoting first element */ }
+  iterator end() { return iterator(data + tail);/* iterator denoting 1 past the last element */ }
+
+  // iterators over a const List
+  const_iterator begin() const { return iterator(data)/* const_iterator denoting first element */; }
+  const_iterator end() const { return iterator(data + tail)/* const_iterator denoting 1 past the last element */; }
+
+
+
+
 }; // End SDAL definition
 
 // --- default constructor --- //
@@ -93,6 +175,44 @@ void SDAL<E>::push_back(E elt)
   ++tail;
 }
 
+// --- replace --- //
+template <typename E>
+E SDAL<E>::replace(E elt, int pos)
+{
+  if (is_empty())
+  {
+    throw std::runtime_error("E SDAL<E>::replace(E elt, int pos): list empty");
+  } else if (pos < 0 || pos >= tail) {
+    throw std::runtime_error("E SDAL<E>::replace(E elt, int pos): index out of bounds");
+  } else {
+    E replaced = data[pos];
+    data[pos] = elt;
+    return replaced;
+  }
+}
+
+// --- insert --- //
+template <typename E>
+void SDAL<E>::insert(E elt, int pos)
+{
+  if (pos < 0 || (pos != 0 && pos >= tail))
+  {
+    throw std::runtime_error("void SDAL<E>::insert(E elt, int pos): index out of bounds");
+  }
+  if (is_empty() && mx_sz >= 1 && pos == 0)
+  {
+    data[0] = elt;
+  } else if (is_full()) {
+    expand();
+    shift_right_from(pos);
+    data[pos] = elt;
+  } else {
+    shift_right_from(pos);
+    data[pos] = elt;
+  }
+  ++tail;
+}
+
 // --- pop_front --- //
 template <typename E>
 E SDAL<E>::pop_front()
@@ -109,6 +229,41 @@ E SDAL<E>::pop_front()
     shrink();
   }
   return top;
+}
+
+// --- pop_back --- //
+template <typename E>
+E SDAL<E>::pop_back()
+{
+  if (is_empty())
+  {
+    throw std::runtime_error("E SDAL<E>::pop_back(): List empty");
+  }
+  E top = data[tail-1];
+  --tail;
+  if (mx_sz >= 2*initial_mx_sz && tail < mx_sz/2)
+  {
+    shrink();
+  }
+  return top;
+}
+
+// --- remove --- //
+template <typename E>
+E SDAL<E>::remove(int pos)
+{
+  if (is_empty())
+  {
+    throw std::runtime_error("E SDAL<E>::remove(int pos): list empty");
+  }
+  E removed = data[pos];
+  shift_left_from(pos);
+  --tail;
+  if (mx_sz >= 2*initial_mx_sz && tail < mx_sz/2)
+  {
+    shrink();
+  }
+  return removed;
 }
 
 // --- peek_front --- //
@@ -194,7 +349,7 @@ void SDAL<E>::expand()
   // fill in the new array with elements from old array shifted
   for (int i = 0; i < tail; ++i)
   {
-    new_data[i+1] = data[i];
+    new_data[i] = data[i];
   }
 
   // delete old array, change mx_sz
@@ -236,11 +391,31 @@ void SDAL<E>::shift()
   }
 }
 
+// --- shift_right_from --- //
+template <typename E>
+void SDAL<E>::shift_right_from(int pos)
+{
+  for (int i = tail; i > pos; --i)
+  {
+    data[i] = data[i-1];
+  }
+}
+
 // --- shift_left --- //
 template <typename E>
 void SDAL<E>::shift_left()
 {
   for (int i = 0; i < tail-1; ++i)
+  {
+    data[i] = data[i+1];
+  }
+}
+
+// --- shift_left_from --- //
+template <typename E>
+void SDAL<E>::shift_left_from(int pos)
+{
+  for (int i = pos; i < tail-1; ++i)
   {
     data[i] = data[i+1];
   }
@@ -269,8 +444,19 @@ std::ostream& SDAL<E>::print(std::ostream &out)
   return out;
 }
 
+template <typename E>
+int SDAL<E>::length()
+{
+  return tail;
+}
 
-
+template <typename E>
+void SDAL<E>::clear()
+{
+  delete [] data;
+  data = new E[initial_mx_sz];
+  tail = 0;
+}
 
 }
 
