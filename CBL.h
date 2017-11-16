@@ -1,6 +1,6 @@
 #ifndef _CBL_H_
 #define _CBL_H_
-#include "list.h"
+#include "List.h"
 #include <stdexcept>
 
 int mod(int a, int b)
@@ -32,12 +32,10 @@ public:
   bool is_empty();
   bool is_full();
   void clear();
-  std::ostream& print(std::ostream &out);
-  bool contains(E elt, bool (*equals_fn)(E a, E b));
-  // // bool contains(E elt); // fix this to make it take a function arg too
+  void print(std::ostream & out);
+  bool contains(E elt, bool (*equals_fn)( const E &a, const E &b));
   E* contents(); // should return an array
-
-
+private:
   // - non virtual functions - //
   void print_contents();
   void print_full();
@@ -45,7 +43,6 @@ public:
   void inc_tail();
   void dec_head();
   void dec_tail();
-private:
   int head;
   int tail;
   int mx_sz;
@@ -141,6 +138,33 @@ public:
 
 }; // end CBL class definition
 
+// --- default constructor --- //
+template <typename E>
+CBL<E>::CBL()
+{
+  head = 0;
+  tail = 0;
+  mx_sz = 50;
+  data = new E[mx_sz + 1];
+
+}
+template <typename E>
+CBL<E>::~CBL()
+{
+  delete [] data;
+}
+
+
+// --- specified constructor --- //
+template <typename E>
+CBL<E>::CBL(int sz)
+{
+  head = 0;
+  tail = 0;
+  mx_sz = sz;
+  data = new E[mx_sz + 1];
+
+}
 
 
 // --- print_full --- //
@@ -564,7 +588,7 @@ void CBL<E>::dec_tail()
 
 // --- print --- //
 template <typename E>
-std::ostream& CBL<E>::print(std::ostream &out)
+void CBL<E>::print(std::ostream & out)
 {
   if(is_empty())
   {
@@ -582,12 +606,11 @@ std::ostream& CBL<E>::print(std::ostream &out)
     }
     out << "]";
   }
-  return out;
 }
 
 // --- contains --- //
 template <typename E>
-bool CBL<E>::contains(E elt, bool (*equals_fn)(E a, E b))
+bool CBL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
 {
   if (is_empty())
   {

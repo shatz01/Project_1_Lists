@@ -1,7 +1,7 @@
 #ifndef _SDAL_H_
 #define _SDAL_H_
 
-#include "list.h"
+#include "List.h"
 #include <stdexcept>
 
 namespace cop3530{
@@ -26,7 +26,9 @@ public:
   bool is_empty();
   bool is_full();
   void clear();
-  std::ostream& print(std::ostream &out);
+  void print(std::ostream & out);
+  E* contents();
+  bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
 private:
   void shift_and_expand();
   void expand();
@@ -423,7 +425,7 @@ void SDAL<E>::shift_left_from(int pos)
 
 // --- print --- //
 template <typename E>
-std::ostream& SDAL<E>::print(std::ostream &out)
+void SDAL<E>::print(std::ostream & out)
 {
   if (is_empty())
   {
@@ -441,7 +443,6 @@ std::ostream& SDAL<E>::print(std::ostream &out)
     }
     out << "]";
   }
-  return out;
 }
 
 template <typename E>
@@ -456,6 +457,42 @@ void SDAL<E>::clear()
   delete [] data;
   data = new E[initial_mx_sz];
   tail = 0;
+}
+
+// --- contents --- //
+template <typename E>
+E* SDAL<E>::contents()
+{
+  if (is_empty())
+  {
+    return new E[0];
+  } else {
+    E* cont = new E[length()];
+    for (int i = 0; i < length(); ++i)
+    {
+      cont[i] = data[i];
+    }
+    return cont;
+  }
+}
+
+// --- contains --- //
+template <typename E>
+bool SDAL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
+{
+  if (is_empty())
+  {
+    return false;
+  }
+  bool exists = false;
+  for (auto thing : *this)
+  {
+    if (equals_fn(thing, elt)){
+      exists = true;
+      break;
+    }
+  }
+  return exists;
 }
 
 }

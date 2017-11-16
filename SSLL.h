@@ -1,14 +1,15 @@
 #ifndef _SSLL_H_
 #define _SSLL_H_
-#include "list.h"
+#include "List.h"
+#include <iostream>
 #include <stdexcept>
 
 namespace cop3530{
 template <typename E>
-struct Node
+struct Node_ssll
 {
   E data;
-  Node *next;
+  Node_ssll *next;
 };
 
 template <typename E>
@@ -31,12 +32,12 @@ public:
   bool is_empty();
   bool is_full();
   void clear();
-  std::ostream& print(std::ostream &out);
-  bool contains(E elt, bool (*equals_fn)(E a, E b)); // fix this to make it take a function arg too
+  void print(std::ostream & out);
+  bool contains(E elt, bool (*equals_fn)( const E &a,const E &b)); // fix this to make it take a function arg too
   E* contents(); // should return an array
 private:
-  Node<E> *head;
-  Node<E> *tail;
+  Node_ssll<E> *head;
+  Node_ssll<E> *tail;
 
 public:
   // ITERATOR CLASS
@@ -55,10 +56,10 @@ public:
     using self_reference = SSLL_Iter&;
 
   private:
-    Node<DataT>* here;
+    Node_ssll<DataT>* here;
 
   public:
-    explicit SSLL_Iter( Node<DataT>* start = nullptr ) : here( start ) {}
+    explicit SSLL_Iter( Node_ssll<DataT>* start = nullptr ) : here( start ) {}
     SSLL_Iter( const SSLL_Iter& src ) : here( src.here ) {}
 
     reference operator*() const {
@@ -123,7 +124,7 @@ template <typename E>
 SSLL<E>::~SSLL()
 {
   while(head){
-    Node<E> *prev = head;
+    Node_ssll<E> *prev = head;
     head = head->next;
     delete prev;
   }
@@ -137,13 +138,13 @@ void SSLL<E>::push_front(E elt)
 
   if (is_empty())
   {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp->data = elt;
     // temp->next = head;
     head = temp;
     tail = temp;
   } else {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp->data = elt;
     temp->next = head; // point new node's next to old top of stack
     head = temp; // point top to the new top of stack
@@ -156,13 +157,13 @@ void SSLL<E>::push_back(E elt)
 {
   if (is_empty())
   {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp->data = elt;
     // temp->next = head;
     head = temp;
     tail = temp;
   } else {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp->data = elt;
     tail->next = temp; // point new node's next to old top of stack
     tail = temp; // point top to the tail of stack
@@ -173,8 +174,12 @@ void SSLL<E>::push_back(E elt)
 template <typename E>
 int SSLL<E>::length()
 {
+  if (is_empty())
+  {
+    return 0;
+  }
   int len = 0;
-  Node<E> *temp = new Node<E>;
+  Node_ssll<E> *temp = new Node_ssll<E>;
   temp = head;
   while (temp != tail)
   {
@@ -195,8 +200,7 @@ E* SSLL<E>::contents()
   } else {
     E* cont = new E[length()];
 
-    Node<E> *temp = new Node<E>;
-    temp = head;
+    Node_ssll<E> *temp = head;
     int i = 0;
     while (temp != tail)
     {
@@ -224,7 +228,7 @@ E SSLL<E>::pop_front()
   {
     throw std::runtime_error("SSLL<E>.pop_front(): empty list");
   } else {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp = head;
     head = head->next;
     return temp->data;
@@ -239,9 +243,9 @@ E SSLL<E>::pop_back()
   {
     throw std::runtime_error("SSLL<E>.pop_back(): empty list");
   } else {
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp = tail;
-    Node<E> *temp2 = new Node<E>;
+    Node_ssll<E> *temp2 = new Node_ssll<E>;
     temp2 = head;
     while (temp2->next != tail)
     {
@@ -303,7 +307,7 @@ E SSLL<E>::item_at(int pos)
   } else {
     // assuming 0-indexed
 
-    Node<E> *temp = new Node<E>;
+    Node_ssll<E> *temp = new Node_ssll<E>;
     temp = head;
     int curr_pos = 0;
     while (curr_pos < pos)
@@ -328,9 +332,9 @@ E SSLL<E>::remove(int pos)
     } else if (pos == length()-1) {
       return pop_back();
     } else {
-      Node<E> *before = new Node<E>;
-      Node<E> *during = new Node<E>;
-      Node<E> *after = new Node<E>;
+      Node_ssll<E> *before = new Node_ssll<E>;
+      Node_ssll<E> *during = new Node_ssll<E>;
+      Node_ssll<E> *after = new Node_ssll<E>;
       before = head;
       during = head->next;
       after = during->next;
@@ -354,19 +358,22 @@ E SSLL<E>::remove(int pos)
 template <typename E>
 void SSLL<E>::insert(E elt, int pos)
 {
-
-  if (is_empty())
+  if (is_empty() && pos != 0)
   {
     throw std::runtime_error("SSLL<E>::insert(): list empty");
+  } else if (is_empty() && pos == 0){
+    push_front(elt);
+  } else if (pos == length()) {
+    push_back(elt);
   } else if (pos < 0 || pos > length()-1) {
-    throw std::runtime_error("SSSLL<E>::insert(): index not in domain");
+    throw std::runtime_error("THIS ERROR SHOULD THROW");
   } else {
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node<E> *before = new Node<E>;
-      Node<E> *during = new Node<E>;
-      Node<E> *new_node = new Node<E>;
+      Node_ssll<E> *before = new Node_ssll<E>;
+      Node_ssll<E> *during = new Node_ssll<E>;
+      Node_ssll<E> *new_node = new Node_ssll<E>;
       new_node->data = elt;
       before = head;
       during = head->next;
@@ -412,30 +419,29 @@ E SSLL<E>::replace(E elt, int pos)
 
 // --- print --- //
 template <typename E>
-std::ostream& SSLL<E>::print(std::ostream &out)
+void SSLL<E>::print(std::ostream & out)
 {
-    if(is_empty())
+  if(is_empty())
+  {
+    out << "<empty list>";
+  } else {
+    out << "[";
+    size_t size = length();
+    E* list = contents();
+    for (size_t i = 0; i < size; ++i)
     {
-      out << "<empty list>";
-    } else {
-      out << "[";
-      size_t size = length();
-      E* list = contents();
-      for (size_t i = 0; i < size; ++i)
-      {
-        if (i == size-1)
-          out << list[i];
-        else
-          out << list[i] << ",";
-      }
-      out << "]";
+      if (i == size-1)
+        out << list[i];
+      else
+        out << list[i] << ",";
     }
-    return out;
+    out << "]";
+  }
 }
 
 // --- contains --- //
 template <typename E>
-bool SSLL<E>::contains(E elt, bool (*equals_fn)(E a, E b))
+bool SSLL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
 {
   if (is_empty())
   {

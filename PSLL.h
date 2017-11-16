@@ -1,14 +1,14 @@
 #ifndef _PSLL_H_
 #define _PSLL_H_
-#include "list.h"
+#include "List.h"
 #include <stdexcept>
 
 namespace cop3530{
 template <typename E>
-struct Node
+struct Node_psll
 {
   E data;
-  Node *next;
+  Node_psll *next;
 };
 
 template <typename E>
@@ -31,18 +31,18 @@ public:
   bool is_empty();
   bool is_full();
   void clear();
-  std::ostream& print(std::ostream &out);
+  void print(std::ostream & out);
   E* contents(); // should return an array
-  bool contains(E elt, bool (*equals_fn)(E a, E b));
+  bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
 private:
   void print_contents(); // prints the array returned from contents
   void print_free(); // prints the free list from 0 to the number of nodes in free list minus 1
   bool free_is_empty();
   int free_length ();
-  Node<E> pop_free();
-  Node<E> *head;
-  Node<E> *tail;
-  Node<E> *free_head;
+  Node_psll<E> pop_free();
+  Node_psll<E> *head;
+  Node_psll<E> *tail;
+  Node_psll<E> *free_head;
 
 public:
   // ITERATOR CLASS
@@ -61,10 +61,10 @@ public:
     using self_reference = PSLL_Iter&;
 
   private:
-    Node<DataT>* here;
+    Node_psll<DataT>* here;
 
   public:
-    explicit PSLL_Iter( Node<DataT>* start = nullptr ) : here( start ) {}
+    explicit PSLL_Iter( Node_psll<DataT>* start = nullptr ) : here( start ) {}
     PSLL_Iter( const PSLL_Iter& src ) : here( src.here ) {}
 
     reference operator*() const {
@@ -122,7 +122,7 @@ public:
 template <typename E>
 PSLL<E>::PSLL()
 {
-  // Node<E> *first_node = new Node<E>;
+  // Node_psll<E> *first_node = new Node_psll<E>;
   head = nullptr;
   tail = nullptr;
   free_head = nullptr;
@@ -132,13 +132,13 @@ PSLL<E>::~PSLL()
 {
   while(head)
   {
-    Node<E> *prev = head;
+    Node_psll<E> *prev = head;
     head = head->next;
     delete prev;
   }
   while (free_head)
   {
-    Node<E> *prev_free = free_head;
+    Node_psll<E> *prev_free = free_head;
     free_head = free_head->next;
     delete prev_free;
   }
@@ -172,7 +172,7 @@ E PSLL<E>::item_at(int pos)
   } else {
     // assuming 0-indexed
 
-    Node<E> *temp = new Node<E>;
+    Node_psll<E> *temp = new Node_psll<E>;
     temp = head;
     int curr_pos = 0;
     while (curr_pos < pos)
@@ -199,7 +199,7 @@ void PSLL<E>::print_free()
   {
     throw std::runtime_error("free is empty");
   }
-  Node<E> *temp = new Node<E>;
+  Node_psll<E> *temp = new Node_psll<E>;
   temp = free_head;
   int i = 0;
   while (temp != NULL)
@@ -215,7 +215,7 @@ void PSLL<E>::print_free()
 template <typename E>
 int PSLL<E>::free_length()
 {
-  Node<E> *temp = new Node<E>;
+  Node_psll<E> *temp = new Node_psll<E>;
   temp = free_head;
   int i = 0;
   while (temp != NULL)
@@ -235,12 +235,12 @@ void PSLL<E>::push_front(E elt)
   {
     if(is_empty()) // is_empty refers to the used list
     {
-      Node<E> *new_node = new Node<E>;
+      Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
       head = new_node;
       tail = new_node;
     } else {
-      Node<E> *new_node = new Node<E>;
+      Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
       new_node->next = head;
       head = new_node;
@@ -248,13 +248,13 @@ void PSLL<E>::push_front(E elt)
   } else {
     if(is_empty()) // is_empty refers to the used list
     {
-      Node<E> *new_node = new Node <E>;
+      Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
       head = new_node;
       tail = new_node;
     } else {
-      Node<E> *new_node = new Node <E>;
+      Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
       new_node->next = head;
@@ -271,12 +271,12 @@ void PSLL<E>::push_back(E elt)
   {
     if(is_empty()) // is_empty refers to the used list
     {
-      Node<E> *new_node = new Node<E>;
+      Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
       head = new_node;
       tail = new_node;
     } else {
-      Node<E> *new_node = new Node<E>;
+      Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
       tail->next = new_node;
       tail = new_node;
@@ -284,13 +284,13 @@ void PSLL<E>::push_back(E elt)
   } else {
     if(is_empty()) // is_empty refers to the used list
     {
-      Node<E> *new_node = new Node <E>;
+      Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
       head = new_node;
       tail = new_node;
     } else {
-      Node<E> *new_node = new Node <E>;
+      Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
       tail->next = new_node;
@@ -308,7 +308,7 @@ E PSLL<E>::pop_front()
     throw std::runtime_error("E PSLL<E>::pop_front(): list empty");
   } else {
     E return_this;
-    Node<E> *temp = head;
+    Node_psll<E> *temp = head;
     head = head->next;
     if (free_length() < 50)
     {
@@ -329,7 +329,7 @@ E PSLL<E>::pop_front()
     //
     //   while (free_length() > half_list_sz)
     //   {
-    //     Node<E> *temp = new Node<E>;
+    //     Node_psll<E> *temp = new Node_psll<E>;
     //     temp = free_head;
     //     free_head = free_head->next;
     //     delete temp;
@@ -362,15 +362,15 @@ E PSLL<E>::pop_back()
 
   else {
     E return_this;
-    // Node<E> *temp = new Node<E>;
+    // Node_psll<E> *temp = new Node_psll<E>;
     // temp = head;
     // head = head->next;
     // temp->next = free_head;
     // free_head = temp;
 
 
-    Node<E> *temp = tail;
-    Node<E> *temp2 = head;
+    Node_psll<E> *temp = tail;
+    Node_psll<E> *temp2 = head;
 
     while (temp2->next != tail)
     {
@@ -398,7 +398,7 @@ E PSLL<E>::pop_back()
     //
     //   while (free_length() > half_list_sz)
     //   {
-    //     Node<E> *temp = new Node<E>;
+    //     Node_psll<E> *temp = new Node_psll<E>;
     //     temp = free_head;
     //     free_head = free_head->next;
     //     delete temp;
@@ -437,9 +437,9 @@ E PSLL<E>::peek_back()
 
 // --- pop_free --- //
 template <typename E>
-Node<E> PSLL<E>::pop_free()
+Node_psll<E> PSLL<E>::pop_free()
 {
-  Node<E> *temp = new Node<E>;
+  Node_psll<E> *temp = new Node_psll<E>;
   temp = free_head;
   free_head = free_head->next;
   return *temp;
@@ -455,7 +455,7 @@ E* PSLL<E>::contents()
   } else {
     E* cont = new E[length()];
 
-    Node<E> *temp = new Node<E>;
+    Node_psll<E> *temp = new Node_psll<E>;
     temp = head;
     int i = 0;
     while (temp != tail)
@@ -478,7 +478,7 @@ int PSLL<E>::length()
     return 0;
   } else {
     int len = 0;
-    Node<E> *temp = new Node<E>;
+    Node_psll<E> *temp = new Node_psll<E>;
     temp = head;
     while (temp != tail)
     {
@@ -517,9 +517,9 @@ void PSLL<E>::insert(E elt, int pos)
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node<E> *before = new Node<E>;
-      Node<E> *during = new Node<E>;
-      Node<E> *new_node = new Node<E>;
+      Node_psll<E> *before = new Node_psll<E>;
+      Node_psll<E> *during = new Node_psll<E>;
+      Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
       before = head;
       during = head->next;
@@ -538,9 +538,9 @@ void PSLL<E>::insert(E elt, int pos)
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node<E> *before = new Node<E>;
-      Node<E> *during = new Node<E>;
-      Node<E> *new_node = new Node <E>;
+      Node_psll<E> *before = new Node_psll<E>;
+      Node_psll<E> *during = new Node_psll<E>;
+      Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
       before = head;
@@ -577,7 +577,7 @@ E PSLL<E>::replace(E elt, int pos)
       return_this = tail->data;
       tail->data = elt;
     } else {
-      Node<E> *temp = new Node<E>;
+      Node_psll<E> *temp = new Node_psll<E>;
       temp = head;
       int curr_pos = 0;
       while (curr_pos < pos)
@@ -607,9 +607,9 @@ E PSLL<E>::remove(int pos)
     } else if (pos == length()-1) {
       return pop_back();
     }  else {
-      Node<E> *before = new Node<E>;
-      Node<E> *during = new Node<E>;
-      Node<E> *after = new Node<E>;
+      Node_psll<E> *before = new Node_psll<E>;
+      Node_psll<E> *during = new Node_psll<E>;
+      Node_psll<E> *after = new Node_psll<E>;
       before = head;
       during = head->next;
       after = during->next;
@@ -643,13 +643,13 @@ void PSLL<E>::clear()
 {
   while(head)
   {
-    Node<E> *prev = head;
+    Node_psll<E> *prev = head;
     head = head->next;
     delete prev;
   }
   while (free_head)
   {
-    Node<E> *prev_free = free_head;
+    Node_psll<E> *prev_free = free_head;
     free_head = free_head->next;
     delete prev_free;
   }
@@ -660,7 +660,7 @@ void PSLL<E>::clear()
 
 // --- print --- //
 template <typename E>
-std::ostream& PSLL<E>::print(std::ostream &out)
+void PSLL<E>::print(std::ostream & out)
 {
   if(is_empty())
   {
@@ -678,12 +678,11 @@ std::ostream& PSLL<E>::print(std::ostream &out)
     }
     out << "]";
   }
-  return out;
 }
 
 // --- contains --- //
 template <typename E>
-bool PSLL<E>::contains(E elt, bool (*equals_fn)(E a, E b))
+bool PSLL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
 {
   if (is_empty())
   {

@@ -1,17 +1,17 @@
 #ifndef _CDAL_H_
 #define _CDAL_H_
 
-#include "list.h"
+#include "List.h"
 #include <stdexcept>
 
 namespace cop3530{
 
 template <typename E>
-struct Node
+struct Node_cdal
 {
   E *data = new E[50];
-  Node* next;
-  Node* prev;
+  Node_cdal* next;
+  Node_cdal* prev;
 };
 
 template <typename E>
@@ -35,18 +35,18 @@ public:
   bool is_full();
   void clear(); ///
   E* contents();
-  std::ostream& print(std::ostream &out);
-  bool contains(E elt, bool (*equals_fn)(E a, E b));
+  void print(std::ostream & out);
+  bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
 private:
   void print_contents(); // prints the array returned from contents
-  Node<E>* node_at(int index);
+  Node_cdal<E>* node_at(int index);
   int num_nodes();
-  Node<E>* node_at_tail();
+  Node_cdal<E>* node_at_tail();
   void shift_right();
   void shift_right_from(int index);
   void delete_half();
   int total_nodes();
-  Node<E> *head_node;
+  Node_cdal<E> *head_node;
   int head;
   int tail;
 
@@ -68,12 +68,12 @@ public:
 
   private:
     E* here;
-    Node<E>* curr;
+    Node_cdal<E>* curr;
     size_t pos = 0;
 
   public:
-    explicit CDAL_Iter( DataT* start , Node<E> *head_node) : here( start ), curr(head_node) {}
-    CDAL_Iter( const CDAL& src, Node<E> *head_node ) : here( src.here ), curr(head_node) {}
+    explicit CDAL_Iter( DataT* start , Node_cdal<E> *head_node) : here( start ), curr(head_node) {}
+    CDAL_Iter( const CDAL& src, Node_cdal<E> *head_node ) : here( src.here ), curr(head_node) {}
 
     reference operator*() const {
       return *here;
@@ -148,7 +148,7 @@ template <typename E>
 CDAL<E>::CDAL()
 {
   // the chain starts off containing just a single array
-  Node<E> *temp = new Node<E>;
+  Node_cdal<E> *temp = new Node_cdal<E>;
   temp->next = nullptr;
   temp->prev = nullptr;
   head = 0;
@@ -160,7 +160,7 @@ template <typename E>
 CDAL<E>::~CDAL()
 {
   while(head_node){
-    Node<E> *previous = head_node;
+    Node_cdal<E> *previous = head_node;
     head_node = head_node->next;
     delete [] previous->data;
     delete previous;
@@ -201,17 +201,17 @@ void CDAL<E>::push_back(E elt)
     tail = 1;
   } else if ((tail+1)%50 == 0 && tail == ((num_nodes()*50)-1)) {
     // traverse until you get to the tail, make another array, add tail to it
-    Node<E> *end = node_at_tail();
+    Node_cdal<E> *end = node_at_tail();
     end->data[49] = elt;
 
     // attach a new array, then increment tail
-    Node<E> *new_end = new Node<E>;
+    Node_cdal<E> *new_end = new Node_cdal<E>;
     new_end->next = nullptr;
     end->next = new_end;
     new_end->prev = end;
     ++tail;
   } else {
-    Node<E> *end = node_at_tail();
+    Node_cdal<E> *end = node_at_tail();
     end->data[tail%50] = elt;
     ++tail;
   }
@@ -248,7 +248,7 @@ E CDAL<E>::peek_back()
 {
   if (is_empty())
     throw std::runtime_error("E CDAL<E>::peek_back(): list empty");
-  Node<E> *tail_node = node_at(tail);
+  Node_cdal<E> *tail_node = node_at(tail);
   int tail_remainder = tail%50;
   return tail_node->data[tail_remainder-1];
 }
@@ -261,7 +261,7 @@ E CDAL<E>::item_at(int pos)
     throw std::runtime_error("E CDAL<E>::item_at(int pos): list empty");
   if (pos < 0 || pos >= tail)
     throw std::runtime_error("E CDAL<E>::item_at(int pos): position out of range");
-  Node<E> *target_node = node_at(pos);
+  Node_cdal<E> *target_node = node_at(pos);
   int pos_remainder = pos%50;
   return target_node->data[pos_remainder];
 }
@@ -274,7 +274,7 @@ void CDAL<E>::insert(E elt, int pos)
   {
     throw std::runtime_error("void CDAL<E>::insert(E elt, int pos): position out of range");
   } else {
-    Node<E> *list = node_at(pos);
+    Node_cdal<E> *list = node_at(pos);
     shift_right_from(pos);
     list->data[pos%50] = elt;
   }
@@ -288,7 +288,7 @@ E CDAL<E>::replace(E elt, int pos)
     throw std::runtime_error("E CDAL<E>::item_at(int pos): list empty");
   if (pos < 0 || pos >= tail)
     throw std::runtime_error("E CDAL<E>::item_at(int pos): position out of range");
-  Node<E> *target_node = node_at(pos);
+  Node_cdal<E> *target_node = node_at(pos);
   int pos_remainder = pos%50;
   E replaced = target_node->data[pos_remainder];
   target_node->data[pos_remainder] = elt;
@@ -303,9 +303,9 @@ E CDAL<E>::remove(int pos)
   if (pos < 0 || pos >= tail)
     throw std::runtime_error("void CDAL<E>::remove(int pos): position out of range");
   // first navigate down to the first necessary list and find tail list
-  Node<E> *tail_node = node_at_tail();
-  Node<E> *pos_node = node_at(pos);
-  Node<E> *traverse = pos_node;
+  Node_cdal<E> *tail_node = node_at_tail();
+  Node_cdal<E> *pos_node = node_at(pos);
+  Node_cdal<E> *traverse = pos_node;
   E removed = pos_node->data[pos];
 
   // now start shiftin'
@@ -347,7 +347,7 @@ E CDAL<E>::remove(int pos)
   if (num_nodes() >= (((tail + 1)/50)+2) )
   {
     // find last node
-    Node<E> *curr = head_node;
+    Node_cdal<E> *curr = head_node;
     while(curr->next != nullptr)
     {
       curr = curr->next;
@@ -372,7 +372,7 @@ template <typename E>
 void CDAL<E>::delete_half()
 {
   // find last node
-  Node<E> *curr = head_node;
+  Node_cdal<E> *curr = head_node;
   while(curr->next != nullptr)
   {
     curr = curr->next;
@@ -395,7 +395,7 @@ void CDAL<E>::delete_half()
 template <typename E>
 int CDAL<E>::total_nodes()
 {
-  Node<E> *curr = head_node;
+  Node_cdal<E> *curr = head_node;
   int amt_nodes = 0;
   while (curr != nullptr) {
     curr = curr->next;
@@ -407,13 +407,13 @@ int CDAL<E>::total_nodes()
 
 // --- node_at_tail --- //
 template <typename E>
-Node<E>* CDAL<E>::node_at_tail()
+Node_cdal<E>* CDAL<E>::node_at_tail()
 {
   // value of tail signifies the end of the list
   // int remain = tail%50;
   int list = tail/50;
 
-  Node<E> *temp = head_node;
+  Node_cdal<E> *temp = head_node;
 
   // move temp to the last list
   for (int i = 0; i < list; ++i)
@@ -441,16 +441,16 @@ bool CDAL<E>::is_full()
 template <typename E>
 void CDAL<E>::shift_right()
 {
-  Node<E> *temp = node_at_tail();
+  Node_cdal<E> *temp = node_at_tail();
   // if tail is 49 at somewhere, need to make new array
   if ((tail+1)%50 == 0 && tail == ((num_nodes()*50)-1))
   {
-    Node<E> *new_end = new Node<E>;
+    Node_cdal<E> *new_end = new Node_cdal<E>;
     temp->next = new_end;
     new_end->prev = temp;
     new_end->next = nullptr;
   }
-  Node<E> *traverse = new Node<E>;
+  Node_cdal<E> *traverse = new Node_cdal<E>;
   traverse = temp; // traverse is at the end of the list
   while (traverse != nullptr)
   {
@@ -487,7 +487,7 @@ void CDAL<E>::shift_right_from(int index)
 
   int list = index/50;
 
-  Node<E> *index_node = new Node<E>;
+  Node_cdal<E> *index_node = new Node_cdal<E>;
   index_node = head_node;
 
   // move index to the list that will start shift
@@ -498,16 +498,16 @@ void CDAL<E>::shift_right_from(int index)
 
   // now index_node should be at the right node
 
-  Node<E> *temp = node_at_tail();
+  Node_cdal<E> *temp = node_at_tail();
   // if tail is 49 at somewhere, need to make new array
   if ((tail+1)%50 == 0 && tail == ((num_nodes()*50)-1))
   {
-    Node<E> *new_end = new Node<E>;
+    Node_cdal<E> *new_end = new Node_cdal<E>;
     temp->next = new_end;
     new_end->prev = temp;
     new_end->next = nullptr;
   }
-  Node<E> *traverse = new Node<E>;
+  Node_cdal<E> *traverse = new Node_cdal<E>;
   traverse = temp; // traverse is at the end of the list
   while (traverse != nullptr)
   {
@@ -553,7 +553,7 @@ void CDAL<E>::shift_right_from(int index)
 template <typename E>
 int CDAL<E>::num_nodes()
 {
-  Node<E> *temp = head_node;
+  Node_cdal<E> *temp = head_node;
   int i = 0;
   while(temp != nullptr){
     i++;
@@ -566,12 +566,11 @@ int CDAL<E>::num_nodes()
 template <typename E>
 E* CDAL<E>::contents()
 {
-  Node<E> *temp = new Node<E>;
-  temp = head_node;
+  Node_cdal<E> *temp = head_node;
   E* cont = new E[tail];
   int j = 0;
 
-  Node<E> *tail_node = node_at_tail();
+  Node_cdal<E> *tail_node = node_at_tail();
 
   while (temp != tail_node->next)
   {
@@ -613,11 +612,11 @@ void CDAL<E>::print_contents()
 
 // --- node_at --- //
 template <typename E>
-Node<E>* CDAL<E>::node_at(int index)
+Node_cdal<E>* CDAL<E>::node_at(int index)
 {
   int list = index/50;
 
-  Node<E> *temp = new Node<E>;
+  Node_cdal<E> *temp = new Node_cdal<E>;
   temp = head_node;
 
   // move temp to the list with the index
@@ -636,7 +635,7 @@ void CDAL<E>::clear()
   // delete its data
   // delete the node
   // keep doing this until you get back to the head_node
-  Node<E> *last_node = head_node;
+  Node_cdal<E> *last_node = head_node;
   while(last_node->next != nullptr)
   {
     last_node = last_node->next;
@@ -652,7 +651,7 @@ void CDAL<E>::clear()
   delete[] head_node->data;
 
   // now make a new start to the CDAL
-  Node<E> *temp = new Node<E>;
+  Node_cdal<E> *temp = new Node_cdal<E>;
   temp->next = nullptr;
   temp->prev = nullptr;
   head = 0;
@@ -664,7 +663,7 @@ void CDAL<E>::clear()
 
 // --- print --- //
 template <typename E>
-std::ostream& CDAL<E>::print(std::ostream &out)
+void CDAL<E>::print(std::ostream & out)
 {
     if(is_empty())
     {
@@ -682,12 +681,11 @@ std::ostream& CDAL<E>::print(std::ostream &out)
       }
       out << "]";
     }
-    return out;
 }
 
 // --- contains --- //
 template <typename E>
-bool CDAL<E>::contains(E elt, bool (*equals_fn)(E a, E b))
+bool CDAL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
 {
   if (is_empty())
   {
