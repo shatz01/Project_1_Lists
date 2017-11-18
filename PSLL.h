@@ -303,9 +303,27 @@ void PSLL<E>::push_back(E elt)
 template <typename E>
 E PSLL<E>::pop_front()
 {
-  if (is_empty())
-  {
+  if (is_empty()) {
     throw std::runtime_error("E PSLL<E>::pop_front(): list empty");
+  } else if(length() == 1) {
+    E return_this;
+    if (free_length() < 50)
+    {
+      Node_psll<E> *temp = head;
+      std::cout << "Got here" << std::endl;
+      return_this = temp->data;
+      std::cout << "And here" << std::endl;
+      temp->next = free_head;
+      std::cout << "AND HEREEE" << std::endl;
+      free_head = temp;
+      std::cout << "WHOAAAA AND HEREEE" << std::endl;
+    } else {
+      return_this = head->data;
+      head = nullptr;
+      tail = nullptr;
+    }
+    // return return_this;
+    return return_this;
   } else {
     E return_this;
     Node_psll<E> *temp = head;
@@ -507,8 +525,9 @@ void PSLL<E>::print_contents()
 template <typename E>
 void PSLL<E>::insert(E elt, int pos)
 {
-  if (is_empty())
-  {
+  if(pos == 0){
+    push_front(elt);
+  } else if (is_empty()){
     throw std::runtime_error("PSLL<E>::insert(): list empty");
   } else if (pos < 0 || pos > length()-1) {
     throw std::runtime_error("SPSLL<E>::insert(): index not in domain");

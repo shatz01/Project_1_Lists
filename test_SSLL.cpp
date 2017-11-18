@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "SSLL.h"
+#include "PSLL.h"
 #include "PSLL.h"
 #include "SDAL.h"
 #include "CDAL.h"
@@ -12,7 +12,7 @@
 SCENARIO("Empty List Check"){
 	GIVEN("Empty list of type int") {
 
-		cop3530::List<int> * list  = new cop3530::SSLL<int>();
+		cop3530::List<int> * list  = new cop3530::PSLL<int>();
 
 		WHEN("length is called") {
 			THEN("Length should return 0"){
@@ -347,7 +347,7 @@ SCENARIO("Empty List Check"){
 SCENARIO("One element list check") {
 	GIVEN( "List with only one element of type string in it ") {
 
-		cop3530::List<std::string> *list = new cop3530::SSLL<std::string>();
+		cop3530::List<std::string> *list = new cop3530::PSLL<std::string>();
 		list->push_back("hay there jak");
 
 		WHEN("length is called") {
@@ -459,12 +459,95 @@ SCENARIO("One element list check") {
 	}
 }
 
+SCENARIO("List of 1001 elements test") {
+	GIVEN("List of 1001 integers numbered 0-1000") {
+		cop3530::List<int> *list = new cop3530::PSLL<int>();
+		for (int i = 0; i < 1001; ++i) {
+			list->push_front(i);
+		}
 
+		WHEN("Checking length, head, tail, item_at") {
+			THEN("Length should be 1001") {
+				REQUIRE(list->length() == 1001);
+			}
+			THEN("Checking head") {
+				REQUIRE(list->peek_front() == 1000);
+			}
+			THEN("Checking item_at") {
+				REQUIRE(list->item_at(0) == 1000);
+				REQUIRE(list->item_at(1000) == 0);
+				REQUIRE_THROWS(list->item_at(1001));
+				REQUIRE(list->item_at(49) == 951);
+			}
+			THEN("Checking tail") {
+				REQUIRE(list->peek_back() == 0);
+			}
+		}
+		WHEN(	"popping front and then checking length, head, tail") {
+			REQUIRE(list->pop_front() == 1000);
+			THEN("Length should be 1000") {
+				REQUIRE(list->length() == 1000);
+			}
+			THEN("Checking head") {
+				REQUIRE(list->peek_front() == 999);
+			}
+			THEN("Checking item_at") {
+				REQUIRE(list->item_at(0) == 999);
+				REQUIRE(list->item_at(999) == 0);
+				REQUIRE_THROWS(list->item_at(1000));
+				REQUIRE(list->item_at(49) == 950);
+			}
+			THEN("Checking tail") {
+				REQUIRE(list->peek_back() == 0);
+			}
+		}
+		WHEN("Removing last element then checking length, head, tail") {
+			REQUIRE(list->remove(1000) == 0);
+			THEN("Length should be 1000") {
+				REQUIRE(list->length() == 1000);
+			}
+			THEN("Checking head") {
+				REQUIRE(list->peek_front() == 1000);
+			}
+			THEN("Checking item_at") {
+				REQUIRE(list->item_at(0) == 1000);
+				REQUIRE(list->item_at(999) == 1);
+				REQUIRE_THROWS(list->item_at(1000));
+				REQUIRE(list->item_at(49) == 951);
+			}
+			THEN("Checking tail") {
+				REQUIRE(list->peek_back() == 1);
+			}
+		}
+		WHEN("Removing last element TWICE then checking length, head, tail") {
+			REQUIRE(list->pop_back() == 0);
+			REQUIRE(list->remove(999) == 1);
+
+			THEN("Length should be 1000") {
+				REQUIRE(list->length() == 999);
+			}
+			THEN("Checking head") {
+				REQUIRE(list->peek_front() == 1000);
+			}
+			THEN("Checking item_at") {
+				REQUIRE(list->item_at(0) == 1000);
+				REQUIRE(list->item_at(998) == 2);
+				REQUIRE_THROWS(list->item_at(999));
+				REQUIRE(list->item_at(49) == 951);
+			}
+			THEN("Checking tail") {
+				REQUIRE(list->peek_back() == 2);
+			}
+		}
+	}
+}
+
+// 0-49, 50-99, 100-149,... ,950-999, 1000-1049;
 
 SCENARIO ("INTERFACE TEST") {
 	GIVEN ("List of characters") {
 
-		cop3530::List<char> * list  = new cop3530::SSLL<char>();
+		cop3530::List<char> * list  = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::SDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
@@ -587,7 +670,7 @@ SCENARIO ("INTERFACE TEST") {
 SCENARIO ("TEST 1") {
 	GIVEN ("List of integers") {
 
-		cop3530::List<int> * list = new cop3530::SSLL<int>();
+		cop3530::List<int> * list = new cop3530::PSLL<int>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::SDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
