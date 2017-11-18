@@ -228,10 +228,19 @@ E SSLL<E>::pop_front()
   {
     throw std::runtime_error("SSLL<E>.pop_front(): empty list");
   } else {
-    Node_ssll<E> *temp = new Node_ssll<E>;
-    temp = head;
+    // if there is 1 element left, need to make list empty
+    if (length() == 1) {
+      E temp = head->data;
+      delete head;
+      head = nullptr;
+      tail = nullptr;
+      return temp;
+    }
+    Node_ssll<E> *temp = head;
+    E temp_data = temp->data;
     head = head->next;
-    return temp->data;
+    delete temp;
+    return temp_data;
   }
 }
 
@@ -243,6 +252,13 @@ E SSLL<E>::pop_back()
   {
     throw std::runtime_error("SSLL<E>.pop_back(): empty list");
   } else {
+    if (length() == 1) {
+      E temp = head->data;
+      delete head;
+      head = nullptr;
+      tail = nullptr;
+      return temp;
+    }
     Node_ssll<E> *temp = new Node_ssll<E>;
     temp = tail;
     Node_ssll<E> *temp2 = new Node_ssll<E>;

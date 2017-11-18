@@ -377,6 +377,83 @@ SCENARIO("One element list check") {
 				REQUIRE(!(list->is_empty()));
 			}
 		}
+		WHEN("Popping from front") {
+			THEN("Should return hay there jak and length should be zero after each one") {
+				REQUIRE(list->pop_front() == "hay there jak");
+				REQUIRE(list->length() == 0);
+			}
+		}
+		WHEN("Popping from back") {
+			THEN("Should return hay there jak and length should be zero after each one") {
+				REQUIRE(list->pop_back() == "hay there jak");
+				REQUIRE(list->length() == 0);
+			}
+		}
+		WHEN("Calling remove") {
+			THEN("Removing any element other that 0 should result in error") {
+				REQUIRE_THROWS(list->remove(-1));
+				REQUIRE_THROWS(list->remove(1));
+			}
+			THEN("Actually removing 0th element") {
+				REQUIRE(list->remove(0) == "hay there jak");
+				REQUIRE(list->length() == 0);
+			}
+
+		}
+		WHEN("Pop from list and then push_back 4 elements to the list") {
+			list->pop_front();
+			list->push_back("w");
+			list->push_back("x");
+			list->push_back("y");
+			list->push_back("z");
+			THEN("Indecies should be equal to expected") {
+				std::string expected[4] = {"w", "x", "y", "z"};
+				for (int i = 0; i < list->length(); ++i)
+				{
+					REQUIRE(list->item_at(i) == expected[i]);
+				}
+			}
+			WHEN("Clear list and push all the elements to the front instead") {
+				list->clear();
+				list->push_front("w");
+				list->push_front("x");
+				list->push_front("y");
+				list->push_front("z");
+				THEN("Indecies should be equal to expected") {
+					std::string expected[4] = {"z", "y", "x", "w"};
+					for (int i = 0; i < list->length(); ++i)
+					{
+						REQUIRE(list->item_at(i) == expected[i]);
+					}
+				}
+			}
+		}
+		WHEN("Replace is called") {
+			REQUIRE_THROWS(list->replace("kden", -1));
+			REQUIRE_THROWS(list->replace("kden", 1));
+			REQUIRE(list->replace("okay", 0) == "hay there jak");
+			THEN("item_at 0 should be okay") {
+				REQUIRE(list->item_at(0) == "okay");
+			}
+
+
+		}
+		WHEN ("Contains is called on the element in there") {
+			bool hay_there = list->contains("hay there jak", [](const std::string& a, const std::string& b) {
+        					return a == b;
+   				   		});
+			THEN ("It should return true") {
+				REQUIRE (hay_there);
+			}
+		}
+		WHEN ("Contains is called on the element NOT in there") {
+			bool k_den = list->contains("kden", [](const std::string& a, const std::string& b) {
+        					return a == b;
+   				   		});
+			THEN ("It should return true") {
+				REQUIRE (!k_den);
+			}
+		}
 
 
 	}
