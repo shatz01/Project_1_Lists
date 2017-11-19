@@ -462,8 +462,9 @@ E CBL<E>::pop_back()
 template <typename E>
 void CBL<E>::insert(E elt, int pos)
 {
-  if (is_empty())
-  {
+  if(pos == length()) {
+    push_back(elt);
+  } else if (is_empty()) {
     throw std::runtime_error("void CBL<E>::insert(E elt, int pos): list empty");
   } else if (is_full()){
     // just need to make the list fatter and then call insert again.

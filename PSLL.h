@@ -237,6 +237,7 @@ void PSLL<E>::push_front(E elt)
     {
       Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
+      new_node->next = nullptr;
       head = new_node;
       tail = new_node;
     } else {
@@ -273,6 +274,7 @@ void PSLL<E>::push_back(E elt)
     {
       Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
+      new_node->next = nullptr;
       head = new_node;
       tail = new_node;
     } else {
@@ -307,22 +309,20 @@ E PSLL<E>::pop_front()
     throw std::runtime_error("E PSLL<E>::pop_front(): list empty");
   } else if(length() == 1) {
     E return_this;
+    Node_psll<E> *temp = head;
+    head = nullptr;
+    tail = nullptr;
+    // head = head->next; // except it doesnt
     if (free_length() < 50)
     {
-      Node_psll<E> *temp = head;
-      std::cout << "Got here" << std::endl;
-      return_this = temp->data;
-      std::cout << "And here" << std::endl;
       temp->next = free_head;
-      std::cout << "AND HEREEE" << std::endl;
       free_head = temp;
-      std::cout << "WHOAAAA AND HEREEE" << std::endl;
+      return_this = free_head->data;
     } else {
       return_this = head->data;
       head = nullptr;
       tail = nullptr;
     }
-    // return return_this;
     return return_this;
   } else {
     E return_this;
@@ -527,9 +527,11 @@ void PSLL<E>::insert(E elt, int pos)
 {
   if(pos == 0){
     push_front(elt);
+  } else if (pos == length()) {
+    push_back(elt);
   } else if (is_empty()){
     throw std::runtime_error("PSLL<E>::insert(): list empty");
-  } else if (pos < 0 || pos > length()-1) {
+  } else if (pos < 0 || pos > length()) {
     throw std::runtime_error("SPSLL<E>::insert(): index not in domain");
   } else if (free_is_empty()) {
 
@@ -660,21 +662,44 @@ E PSLL<E>::remove(int pos)
 template <typename E>
 void PSLL<E>::clear()
 {
+  std::cout << "about to delete all of list" << std::endl;
   while(head)
   {
+    std::cout << " ...";
     Node_psll<E> *prev = head;
+    if(!(head->next)){
+      delete head;
+      break;
+    }
     head = head->next;
     delete prev;
   }
+  std::cout << " done!";
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << "about to delete all of FREE list" << std::endl;
+
   while (free_head)
   {
+    std::cout << " ...";
     Node_psll<E> *prev_free = free_head;
+    if(!(free_head->next)){
+      delete free_head;
+      break;
+    }
     free_head = free_head->next;
     delete prev_free;
   }
+  std::cout << " done!";
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << "about to set head, tail, and free head to nullptr" << std::endl;
   head = nullptr;
   tail = nullptr;
   free_head = nullptr;
+  std::cout << "... done!" << std::endl;
 }
 
 // --- print --- //

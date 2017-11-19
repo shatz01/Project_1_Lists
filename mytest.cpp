@@ -1,19 +1,25 @@
 #include "SSLL.h"
 #include "PSLL.h"
+#include "SDAL.h"
 #include <iostream>
-using namespace cop3530;
 
 int main()
 {
-  PSLL<int> list;
-  // list.insert(5,0);
-  list.insert(4,0);
-  list.pop_front();
-  // list.print(std::cout);
-  // list.pop_front();
-  // std::cout << "Length: " << list.length() << std::endl;
-
-  // list.insert('b',1);
-  // list.print(std::cout);
+  cop3530::List<char> * list  = new cop3530::SDAL<char>();
+  // for (int i = 0; i < 11; ++i){
+  //   list->insert(i, 0);
+  // }
+  // list->insert(1,0);
+  // list->clear();
+  //
+  // list->insert(9,0);
+  // std::cout << list->peek_front() << std::endl;
+  // std::cout << list->peek_back() << std::endl;
+  // list->insert(5,0);
+  // list-
+  list->insert('A', 0);
+  // list->push_back('A');
+  std::cout << list->length() << std::endl;
+  list->print(std::cout);
   return 0;
 }

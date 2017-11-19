@@ -270,7 +270,9 @@ E CDAL<E>::item_at(int pos)
 template <typename E>
 void CDAL<E>::insert(E elt, int pos)
 {
-  if (pos < 0 || pos >= tail)
+  if (pos == tail) {
+    push_back(elt);
+  } else if (pos < 0 || pos > tail)
   {
     throw std::runtime_error("void CDAL<E>::insert(E elt, int pos): position out of range");
   } else {

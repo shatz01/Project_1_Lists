@@ -197,8 +197,10 @@ E SDAL<E>::replace(E elt, int pos)
 template <typename E>
 void SDAL<E>::insert(E elt, int pos)
 {
-  if (pos < 0 || (pos != 0 && pos >= tail))
-  {
+  if(pos == length()){
+    push_back(elt);
+    return;
+  } else if (pos < 0 || pos > tail) {
     throw std::runtime_error("void SDAL<E>::insert(E elt, int pos): index out of bounds");
   }
   if (is_empty() && mx_sz >= 1 && pos == 0)
@@ -448,6 +450,9 @@ void SDAL<E>::print(std::ostream & out)
 template <typename E>
 int SDAL<E>::length()
 {
+  if(is_empty()){
+    return 0;
+  }
   return tail;
 }
 
