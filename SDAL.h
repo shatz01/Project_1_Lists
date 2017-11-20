@@ -260,6 +260,9 @@ E SDAL<E>::remove(int pos)
   {
     throw std::runtime_error("E SDAL<E>::remove(int pos): list empty");
   }
+  if (pos < 0 || pos > length()-1){
+    throw std::runtime_error("E SDAL<E>::remove(int pos): index out of bounds");
+  }
   E removed = data[pos];
   shift_left_from(pos);
   --tail;

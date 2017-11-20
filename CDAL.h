@@ -37,7 +37,7 @@ public:
   E* contents();
   void print(std::ostream & out);
   bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
-private:
+// private:
   void print_contents(); // prints the array returned from contents
   Node_cdal<E>* node_at(int index);
   int num_nodes();
@@ -248,8 +248,15 @@ E CDAL<E>::peek_back()
 {
   if (is_empty())
     throw std::runtime_error("E CDAL<E>::peek_back(): list empty");
-  Node_cdal<E> *tail_node = node_at(tail);
+  Node_cdal<E> *tail_node;
+  if (tail%50 == 0) {
+    tail_node = node_at(tail-1);
+    return tail_node->data[49];
+  } else {
+    tail_node = node_at_tail();
+  }
   int tail_remainder = tail%50;
+  // std::cout << "Tail remainder: " << tail_remainder << std::endl;
   return tail_node->data[tail_remainder-1];
 }
 
@@ -304,14 +311,15 @@ E CDAL<E>::remove(int pos)
   // just need to shift all elements left starting from pos
   if (pos < 0 || pos >= tail)
     throw std::runtime_error("void CDAL<E>::remove(int pos): position out of range");
+
   // first navigate down to the first necessary list and find tail list
   Node_cdal<E> *tail_node = node_at_tail();
   Node_cdal<E> *pos_node = node_at(pos);
   Node_cdal<E> *traverse = pos_node;
-  E removed = pos_node->data[pos];
+  E removed = pos_node->data[pos%50];
+  // std::cout << "THE DATA YOU WANT TO REMOVE: " << removed << std::endl;
 
   // now start shiftin'
-  // std::cout << "got here"
   while (traverse != tail_node->next)
   {
     if (traverse == pos_node && traverse == tail_node){
@@ -618,8 +626,7 @@ Node_cdal<E>* CDAL<E>::node_at(int index)
 {
   int list = index/50;
 
-  Node_cdal<E> *temp = new Node_cdal<E>;
-  temp = head_node;
+  Node_cdal<E> *temp = head_node;
 
   // move temp to the list with the index
   for (int i = 0; i < list; ++i)

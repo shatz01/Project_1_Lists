@@ -1,18 +1,18 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "PSLL.h"
+#include "SSLL.h"
 #include "PSLL.h"
 #include "SDAL.h"
 #include "CDAL.h"
-#include "CBL.h"
+// #include "CDAL.h"
 
 #include <iostream>
 
 SCENARIO("Empty List Check"){
 	GIVEN("Empty list of type int") {
 
-		cop3530::List<int> * list  = new cop3530::PSLL<int>();
+		cop3530::List<int> * list  = new cop3530::CDAL<int>();
 
 		WHEN("length is called") {
 			THEN("Length should return 0"){
@@ -347,7 +347,7 @@ SCENARIO("Empty List Check"){
 SCENARIO("One element list check") {
 	GIVEN( "List with only one element of type string in it ") {
 
-		cop3530::List<std::string> *list = new cop3530::PSLL<std::string>();
+		cop3530::List<std::string> *list = new cop3530::CDAL<std::string>();
 		list->push_back("hay there jak");
 
 		WHEN("length is called") {
@@ -461,7 +461,7 @@ SCENARIO("One element list check") {
 
 SCENARIO("List of 1001 elements test") {
 	GIVEN("List of 1001 integers numbered 0-1000") {
-		cop3530::List<int> *list = new cop3530::PSLL<int>();
+		cop3530::List<int> *list = new cop3530::CDAL<int>();
 		for (int i = 0; i < 1001; ++i) {
 			list->push_front(i);
 		}
@@ -499,6 +499,24 @@ SCENARIO("List of 1001 elements test") {
 			}
 			THEN("Checking tail") {
 				REQUIRE(list->peek_back() == 0);
+			}
+		}
+		WHEN("Popping last element then checking length, head, tail") {
+			REQUIRE(list->pop_back() == 0);
+			THEN("Length should be 1000") {
+				REQUIRE(list->length() == 1000);
+			}
+			THEN("Checking head") {
+				REQUIRE(list->peek_front() == 1000);
+			}
+			THEN("Checking item_at") {
+				REQUIRE(list->item_at(0) == 1000);
+				REQUIRE(list->item_at(999) == 1);
+				REQUIRE_THROWS(list->item_at(1000));
+				REQUIRE(list->item_at(49) == 951);
+			}
+			THEN("Checking tail") {
+				REQUIRE(list->peek_back() == 1);
 			}
 		}
 		WHEN("Removing last element then checking length, head, tail") {
@@ -547,11 +565,11 @@ SCENARIO("List of 1001 elements test") {
 SCENARIO ("INTERFACE TEST") {
 	GIVEN ("List of characters") {
 
-		cop3530::List<char> * list  = new cop3530::PSLL<char>();
+		cop3530::List<char> * list  = new cop3530::CDAL<char>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
-		// cop3530::List<char> * list = new cop3530::SDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
-		// cop3530::List<char> * list = new cop3530::CBL<char>();
+		// cop3530::List<char> * list = new cop3530::CDAL<char>();
+		// cop3530::List<char> * list = new cop3530::CDAL<char>();
 
 		list->insert('A', 0);
 		list->insert('B', 1);
@@ -670,11 +688,11 @@ SCENARIO ("INTERFACE TEST") {
 SCENARIO ("TEST 1") {
 	GIVEN ("List of integers") {
 
-		cop3530::List<int> * list = new cop3530::PSLL<int>();
+		cop3530::List<int> * list = new cop3530::CDAL<int>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
-		// cop3530::List<char> * list = new cop3530::SDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
-		// cop3530::List<char> * list = new cop3530::CBL<char>();
+		// cop3530::List<char> * list = new cop3530::CDAL<char>();
+		// cop3530::List<char> * list = new cop3530::CDAL<char>();
 
 		for(int i = 0; i < 10; i++)
 			list->insert(i, 0);
