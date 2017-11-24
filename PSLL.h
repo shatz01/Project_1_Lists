@@ -215,8 +215,8 @@ void PSLL<E>::print_free()
 template <typename E>
 int PSLL<E>::free_length()
 {
-  Node_psll<E> *temp = new Node_psll<E>;
-  temp = free_head;
+  // fixed this while drunk, please double check that this works tomorrow when you are sober
+  Node_psll<E> *temp =  free_head;
   int i = 0;
   while (temp != NULL)
   {
@@ -252,6 +252,7 @@ void PSLL<E>::push_front(E elt)
       Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
+      new_node->next = nullptr;
       head = new_node;
       tail = new_node;
     } else {
@@ -289,6 +290,7 @@ void PSLL<E>::push_back(E elt)
       Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
+      new_node->next = nullptr;
       head = new_node;
       tail = new_node;
     } else {
@@ -662,10 +664,10 @@ E PSLL<E>::remove(int pos)
 template <typename E>
 void PSLL<E>::clear()
 {
-  std::cout << "about to delete all of list" << std::endl;
+  // std::cout << "about to delete all of list" << std::endl;
   while(head)
   {
-    std::cout << " ...";
+    // std::cout << " ...";
     Node_psll<E> *prev = head;
     if(!(head->next)){
       delete head;
@@ -674,15 +676,15 @@ void PSLL<E>::clear()
     head = head->next;
     delete prev;
   }
-  std::cout << " done!";
+  // std::cout << " done!";
 
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << "about to delete all of FREE list" << std::endl;
+  // std::cout << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "about to delete all of FREE list" << std::endl;
 
   while (free_head)
   {
-    std::cout << " ...";
+    // std::cout << " ...";
     Node_psll<E> *prev_free = free_head;
     if(!(free_head->next)){
       delete free_head;
@@ -691,15 +693,14 @@ void PSLL<E>::clear()
     free_head = free_head->next;
     delete prev_free;
   }
-  std::cout << " done!";
+  // std::cout << " done!";
 
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << "about to set head, tail, and free head to nullptr" << std::endl;
+  // std::cout << std::e
+  // std::cout << "about to set head, tail, and free head to nullptr" << std::endl;
   head = nullptr;
   tail = nullptr;
   free_head = nullptr;
-  std::cout << "... done!" << std::endl;
+  // std::cout << "... done!" << std::endl;
 }
 
 // --- print --- //

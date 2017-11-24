@@ -12,7 +12,7 @@
 SCENARIO("Empty List Check"){
 	GIVEN("Empty list of type int") {
 
-		cop3530::List<int> * list  = new cop3530::CDAL<int>();
+		cop3530::List<int> * list  = new cop3530::PSLL<int>();
 
 		WHEN("length is called") {
 			THEN("Length should return 0"){
@@ -347,7 +347,7 @@ SCENARIO("Empty List Check"){
 SCENARIO("One element list check") {
 	GIVEN( "List with only one element of type string in it ") {
 
-		cop3530::List<std::string> *list = new cop3530::CDAL<std::string>();
+		cop3530::List<std::string> *list = new cop3530::PSLL<std::string>();
 		list->push_back("hay there jak");
 
 		WHEN("length is called") {
@@ -414,6 +414,8 @@ SCENARIO("One element list check") {
 				}
 			}
 			WHEN("Clear list and push all the elements to the front instead") {
+				list->print(std::cout);
+
 				list->clear();
 				list->push_front("w");
 				list->push_front("x");
@@ -461,7 +463,7 @@ SCENARIO("One element list check") {
 
 SCENARIO("List of 1001 elements test") {
 	GIVEN("List of 1001 integers numbered 0-1000") {
-		cop3530::List<int> *list = new cop3530::CDAL<int>();
+		cop3530::List<int> *list = new cop3530::PSLL<int>();
 		for (int i = 0; i < 1001; ++i) {
 			list->push_front(i);
 		}
@@ -565,7 +567,7 @@ SCENARIO("List of 1001 elements test") {
 SCENARIO ("INTERFACE TEST") {
 	GIVEN ("List of characters") {
 
-		cop3530::List<char> * list  = new cop3530::CDAL<char>();
+		cop3530::List<char> * list  = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
@@ -688,7 +690,7 @@ SCENARIO ("INTERFACE TEST") {
 SCENARIO ("TEST 1") {
 	GIVEN ("List of integers") {
 
-		cop3530::List<int> * list = new cop3530::CDAL<int>();
+		cop3530::List<int> * list = new cop3530::PSLL<int>();
 		// cop3530::List<char> * list = new cop3530::PSLL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
 		// cop3530::List<char> * list = new cop3530::CDAL<char>();
