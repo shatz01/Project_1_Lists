@@ -117,8 +117,8 @@ public:
 template <typename E>
 SSLL<E>::SSLL()
 {
-  head = NULL;
-  tail = NULL;
+  head = nullptr;
+  tail = nullptr;
 }
 template <typename E>
 SSLL<E>::~SSLL()
@@ -179,8 +179,7 @@ int SSLL<E>::length()
     return 0;
   }
   int len = 0;
-  Node_ssll<E> *temp = new Node_ssll<E>;
-  temp = head;
+  Node_ssll<E> *temp = head;
   while (temp != tail)
   {
     len++;
@@ -217,7 +216,7 @@ E* SSLL<E>::contents()
 template <typename E>
 bool SSLL<E>::is_empty()
 {
-  return(head == NULL && tail == NULL);
+  return(head == nullptr && tail == nullptr);
 }
 
 // --- pop_front --- //
@@ -259,10 +258,8 @@ E SSLL<E>::pop_back()
       tail = nullptr;
       return temp;
     }
-    Node_ssll<E> *temp = new Node_ssll<E>;
-    temp = tail;
-    Node_ssll<E> *temp2 = new Node_ssll<E>;
-    temp2 = head;
+    Node_ssll<E> *temp = tail;
+    Node_ssll<E> *temp2 = head;
     while (temp2->next != tail)
     {
       temp2 = temp2->next;
@@ -307,8 +304,8 @@ bool SSLL<E>::is_full()
 template <typename E>
 void SSLL<E>::clear()
 {
-  head = NULL;
-  tail = NULL;
+  head = nullptr;
+  tail = nullptr;
 }
 
 // --- item_at --- //
@@ -323,8 +320,7 @@ E SSLL<E>::item_at(int pos)
   } else {
     // assuming 0-indexed
 
-    Node_ssll<E> *temp = new Node_ssll<E>;
-    temp = head;
+    Node_ssll<E> *temp = head;
     int curr_pos = 0;
     while (curr_pos < pos)
     {
@@ -348,12 +344,9 @@ E SSLL<E>::remove(int pos)
     } else if (pos == length()-1) {
       return pop_back();
     } else {
-      Node_ssll<E> *before = new Node_ssll<E>;
-      Node_ssll<E> *during = new Node_ssll<E>;
-      Node_ssll<E> *after = new Node_ssll<E>;
-      before = head;
-      during = head->next;
-      after = during->next;
+      Node_ssll<E> *before = head;
+      Node_ssll<E> *during = head->next;
+      Node_ssll<E> *after = during->next;
       int curr_pos = 1;
       while (curr_pos != pos)
       {
@@ -387,12 +380,10 @@ void SSLL<E>::insert(E elt, int pos)
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node_ssll<E> *before = new Node_ssll<E>;
-      Node_ssll<E> *during = new Node_ssll<E>;
+      Node_ssll<E> *before = head;
+      Node_ssll<E> *during = head->next;
       Node_ssll<E> *new_node = new Node_ssll<E>;
       new_node->data = elt;
-      before = head;
-      during = head->next;
       int curr_pos = 1;
       while(curr_pos != pos)
       {

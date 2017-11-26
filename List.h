@@ -25,7 +25,6 @@ public:
   virtual void print(std::ostream & out) = 0;
   virtual bool contains(E elt, bool (*equals_fn)(const E &a, const E &b)) = 0;
   virtual E* contents() = 0; // should return an array
-
 };
 
 
