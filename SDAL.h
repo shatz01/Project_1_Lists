@@ -1,7 +1,7 @@
 #ifndef _SDAL_H_
 #define _SDAL_H_
 
-#include "list.h"
+#include "List.h"
 #include <stdexcept>
 
 namespace cop3530{
@@ -26,7 +26,9 @@ public:
   bool is_empty();
   bool is_full();
   void clear();
-  std::ostream& print(std::ostream &out);
+  void print(std::ostream & out);
+  E* contents();
+  bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
 private:
   void shift_and_expand();
   void expand();
@@ -195,8 +197,10 @@ E SDAL<E>::replace(E elt, int pos)
 template <typename E>
 void SDAL<E>::insert(E elt, int pos)
 {
-  if (pos < 0 || (pos != 0 && pos >= tail))
-  {
+  if(pos == length()){
+    push_back(elt);
+    return;
+  } else if (pos < 0 || pos > tail) {
     throw std::runtime_error("void SDAL<E>::insert(E elt, int pos): index out of bounds");
   }
   if (is_empty() && mx_sz >= 1 && pos == 0)
@@ -255,6 +259,9 @@ E SDAL<E>::remove(int pos)
   if (is_empty())
   {
     throw std::runtime_error("E SDAL<E>::remove(int pos): list empty");
+  }
+  if (pos < 0 || pos > length()-1){
+    throw std::runtime_error("E SDAL<E>::remove(int pos): index out of bounds");
   }
   E removed = data[pos];
   shift_left_from(pos);
@@ -423,7 +430,7 @@ void SDAL<E>::shift_left_from(int pos)
 
 // --- print --- //
 template <typename E>
-std::ostream& SDAL<E>::print(std::ostream &out)
+void SDAL<E>::print(std::ostream & out)
 {
   if (is_empty())
   {
@@ -441,12 +448,14 @@ std::ostream& SDAL<E>::print(std::ostream &out)
     }
     out << "]";
   }
-  return out;
 }
 
 template <typename E>
 int SDAL<E>::length()
 {
+  if(is_empty()){
+    return 0;
+  }
   return tail;
 }
 
@@ -456,6 +465,42 @@ void SDAL<E>::clear()
   delete [] data;
   data = new E[initial_mx_sz];
   tail = 0;
+}
+
+// --- contents --- //
+template <typename E>
+E* SDAL<E>::contents()
+{
+  if (is_empty())
+  {
+    return new E[0];
+  } else {
+    E* cont = new E[length()];
+    for (int i = 0; i < length(); ++i)
+    {
+      cont[i] = data[i];
+    }
+    return cont;
+  }
+}
+
+// --- contains --- //
+template <typename E>
+bool SDAL<E>::contains(E elt, bool (*equals_fn)(const E &a, const E &b))
+{
+  if (is_empty())
+  {
+    return false;
+  }
+  bool exists = false;
+  for (auto thing : *this)
+  {
+    if (equals_fn(thing, elt)){
+      exists = true;
+      break;
+    }
+  }
+  return exists;
 }
 
 }
