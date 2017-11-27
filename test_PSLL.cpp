@@ -1,14 +1,14 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "SSLL.h"
+#include "PSLL.h"
 
 #include <iostream>
 
 SCENARIO("Empty List Check"){
 	GIVEN("Empty list of type int") {
 
-		cop3530::List<int> * list  = new cop3530::SSLL<int>();
+		cop3530::List<int> * list  = new cop3530::PSLL<int>();
 
 		WHEN("length is called") {
 			THEN("Length should return 0"){
@@ -343,7 +343,7 @@ SCENARIO("Empty List Check"){
 SCENARIO("One element list check") {
 	GIVEN( "List with only one element of type string in it ") {
 
-		cop3530::List<std::string> *list = new cop3530::SSLL<std::string>();
+		cop3530::List<std::string> *list = new cop3530::PSLL<std::string>();
 		list->push_back("hay there jak");
 
 		WHEN("length is called") {
@@ -411,8 +411,9 @@ SCENARIO("One element list check") {
 			}
 			WHEN("Clear list and push all the elements to the front instead") {
 				list->print(std::cout);
-
+				// std::cout << "ABOUT TO CLEAR LIST --------------------------" << std::endl;
 				list->clear();
+				// std::cout << "LIST CLEARED ___________________________" << std::endl;
 				list->push_front("w");
 				list->push_front("x");
 				list->push_front("y");
@@ -459,7 +460,7 @@ SCENARIO("One element list check") {
 
 SCENARIO("List of 1001 elements test") {
 	GIVEN("List of 1001 integers numbered 0-1000") {
-		cop3530::List<int> *list = new cop3530::SSLL<int>();
+		cop3530::List<int> *list = new cop3530::PSLL<int>();
 		for (int i = 0; i < 1001; ++i) {
 			list->push_front(i);
 		}
@@ -562,16 +563,16 @@ SCENARIO("List of 1001 elements test") {
 // 	using namespace cop3530;
 // 	GIVEN("3 lists of integers, making copies of them using copy constructor") {
 // 		// empty list
-// 		SSLL<int> og_list_0;
+// 		PSLL<int> og_list_0;
 //
 // 		// list with 50 elements
-// 		SSLL<int> og_list_50;
+// 		PSLL<int> og_list_50;
 // 		for (int i = 0; i < 50; ++i) {
 // 			og_list_50.push_back(i);
 // 		}
 //
 // 		// list with 51 elements
-// 		SSLL<int> og_list_51;
+// 		PSLL<int> og_list_51;
 // 		for (int i = 0; i < 51; ++i) {
 // 			og_list_51.push_back(i);
 // 		}
@@ -579,11 +580,11 @@ SCENARIO("List of 1001 elements test") {
 //
 //
 // 		// make copies
-// 		SSLL<int> new_list_0 = og_list_0;
+// 		PSLL<int> new_list_0 = og_list_0;
 // 		std::cout << "Made list 0" << std::endl;
-// 		SSLL<int> new_list_50 = og_list_50;
+// 		PSLL<int> new_list_50 = og_list_50;
 // 		std::cout << "Made list 50" << std::endl;
-// 		SSLL<int> new_list_51 = og_list_51;
+// 		PSLL<int> new_list_51 = og_list_51;
 // 		std::cout << "Made list 51" << std::endl;
 //
 // 		// test that the copies are as they should be
@@ -656,16 +657,16 @@ SCENARIO("List of 1001 elements test") {
 //
 // 	// GIVEN("3 lists of integers, making copies of them using copy assignment operator") {
 // 	// 	// empty list
-// 	// 	SSLL<E> og_list_zero;
+// 	// 	PSLL<E> og_list_zero;
 // 	//
 // 	// 	// list with 49 elements
-// 	// 	SSLL<E> og_list_49;
+// 	// 	PSLL<E> og_list_49;
 // 	// 	for (int i = 0; i < 49; ++i) {
 // 	// 		og_list_49.push_back(i);
 // 	// 	}
 // 	//
 // 	// 	// list with 50 elements
-// 	// 	SSLL<E> og_list_50;
+// 	// 	PSLL<E> og_list_50;
 // 	// 	for (int i = 0; i < 50; ++i) {
 // 	// 		og_list_50.push_back(i);
 // 	// 	}
@@ -678,7 +679,7 @@ SCENARIO("List of 1001 elements test") {
 SCENARIO ("INTERFACE TEST") {
 	GIVEN ("List of characters") {
 
-		cop3530::List<char> * list  = new cop3530::SSLL<char>();
+		cop3530::List<char> * list  = new cop3530::PSLL<char>();
 
 		list->insert('A', 0);
 		list->insert('B', 1);
@@ -797,7 +798,7 @@ SCENARIO ("INTERFACE TEST") {
 SCENARIO ("TEST 1") {
 	GIVEN ("List of integers") {
 
-		cop3530::List<int> * list = new cop3530::SSLL<int>();
+		cop3530::List<int> * list = new cop3530::PSLL<int>();
 
 		for(int i = 0; i < 10; i++)
 			list->insert(i, 0);

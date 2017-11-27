@@ -173,7 +173,7 @@ E PSLL<E>::item_at(int pos)
     // assuming 0-indexed
 
     Node_psll<E> *temp = new Node_psll<E>;
-    temp = head;
+    temp =head;
     int curr_pos = 0;
     while (curr_pos < pos)
     {
@@ -199,10 +199,9 @@ void PSLL<E>::print_free()
   {
     throw std::runtime_error("free is empty");
   }
-  Node_psll<E> *temp = new Node_psll<E>;
-  temp = free_head;
+  Node_psll<E> *temp = free_head;
   int i = 0;
-  while (temp != NULL)
+  while (temp != nullptr)
   {
     temp = temp->next;
     std::cout << i << " ";
@@ -218,7 +217,7 @@ int PSLL<E>::free_length()
   // fixed this while drunk, please double check that this works tomorrow when you are sober
   Node_psll<E> *temp =  free_head;
   int i = 0;
-  while (temp != NULL)
+  while (temp != nullptr)
   {
     temp = temp->next;
     i++;
@@ -459,8 +458,7 @@ E PSLL<E>::peek_back()
 template <typename E>
 Node_psll<E> PSLL<E>::pop_free()
 {
-  Node_psll<E> *temp = new Node_psll<E>;
-  temp = free_head;
+  Node_psll<E> *temp = free_head;
   free_head = free_head->next;
   return *temp;
 }
@@ -475,8 +473,7 @@ E* PSLL<E>::contents()
   } else {
     E* cont = new E[length()];
 
-    Node_psll<E> *temp = new Node_psll<E>;
-    temp = head;
+    Node_psll<E> *temp = head;
     int i = 0;
     while (temp != tail)
     {
@@ -540,12 +537,12 @@ void PSLL<E>::insert(E elt, int pos)
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node_psll<E> *before = new Node_psll<E>;
-      Node_psll<E> *during = new Node_psll<E>;
+      Node_psll<E> *before = head;
+      Node_psll<E> *during = head->next;
       Node_psll<E> *new_node = new Node_psll<E>;
       new_node->data = elt;
-      before = head;
-      during = head->next;
+      // before = head;
+      // during = head->next;
       int curr_pos = 1;
       while(curr_pos != pos)
       {
@@ -561,13 +558,13 @@ void PSLL<E>::insert(E elt, int pos)
     if (pos == 0) {
       push_front(elt);
     } else {
-      Node_psll<E> *before = new Node_psll<E>;
-      Node_psll<E> *during = new Node_psll<E>;
+      Node_psll<E> *before = head;
+      Node_psll<E> *during = head->next;
       Node_psll<E> *new_node = new Node_psll <E>;
       *new_node = pop_free();
       new_node->data = elt;
-      before = head;
-      during = head->next;
+      // before = head;
+      // during = head->next;
       int curr_pos = 1;
       while(curr_pos != pos)
       {
@@ -600,8 +597,7 @@ E PSLL<E>::replace(E elt, int pos)
       return_this = tail->data;
       tail->data = elt;
     } else {
-      Node_psll<E> *temp = new Node_psll<E>;
-      temp = head;
+      Node_psll<E> *temp = head;
       int curr_pos = 0;
       while (curr_pos < pos)
       {
@@ -630,12 +626,12 @@ E PSLL<E>::remove(int pos)
     } else if (pos == length()-1) {
       return pop_back();
     }  else {
-      Node_psll<E> *before = new Node_psll<E>;
-      Node_psll<E> *during = new Node_psll<E>;
-      Node_psll<E> *after = new Node_psll<E>;
-      before = head;
-      during = head->next;
-      after = during->next;
+      Node_psll<E> *before = head;
+      Node_psll<E> *during = head->next;
+      Node_psll<E> *after = during->next;
+      // before = head;
+      // during = head->next;
+      // after = during->next;
       int curr_pos = 1;
       while(curr_pos != pos)
       {
