@@ -411,8 +411,9 @@ SCENARIO("One element list check") {
 			}
 			WHEN("Clear list and push all the elements to the front instead") {
 				list->print(std::cout);
-
+				// std::cout << "ABOUT TO CLEAR LIST --------------------------" << std::endl;
 				list->clear();
+				// std::cout << "LIST CLEARED ___________________________" << std::endl;
 				list->push_front("w");
 				list->push_front("x");
 				list->push_front("y");
