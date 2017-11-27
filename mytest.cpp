@@ -2,27 +2,27 @@
 #include "PSLL.h"
 #include "SDAL.h"
 #include "CDAL.h"
+#include "CBL.h"
 #include <iostream>
 using namespace cop3530;
 
 int main()
 {
   // cop3530::List<int> *list = new cop3530::SSLL<int>();
-  SSLL<int> list;
+  CBL<int> list;
   list.push_front(5);
   list.push_front(6);
   list.print(std::cout);
   std::cout << std::endl;
 
-  SSLL<int> list2;
-  list2 = list;
+  CBL<int> list_cpy = list;
 
   std::cout << "List 1: ";
   list.print(std::cout);
   std::cout << std::endl;
 
-  std::cout << "List 2: ";
-  list2.print(std::cout);
+  std::cout << "Copy:   ";
+  list_cpy.print(std::cout);
   std::cout << std::endl;
 
 
@@ -39,20 +39,20 @@ int main()
   list.print(std::cout);
   std::cout << std::endl;
 
-  std::cout << "List 2: ";
-  list2.print(std::cout);
+  std::cout << "Copy:   ";
+  list_cpy.print(std::cout);
   std::cout << std::endl;
 
   std::cout << std::endl;
-  std::cout << "Pushing to list 2" << std::endl;
-  list2.push_back(99);
+  std::cout << "Pushing to Copy: " << std::endl;
+  list_cpy.push_back(99);
 
   std::cout << "List 1: ";
   list.print(std::cout);
   std::cout << std::endl;
 
-  std::cout << "List 2: ";
-  list2.print(std::cout);
+  std::cout << "Copy:   ";
+  list_cpy.print(std::cout);
   std::cout << std::endl;
 
 

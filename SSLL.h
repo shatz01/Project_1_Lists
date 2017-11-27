@@ -18,6 +18,10 @@ class SSLL : public List<E>
 public:
   SSLL();
   ~SSLL();
+  SSLL(SSLL& src);
+  SSLL& operator=(SSLL& src);
+  SSLL(SSLL&& src);
+  SSLL& operator=(SSLL&& src);
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -129,6 +133,92 @@ SSLL<E>::~SSLL()
     delete prev;
   }
 }
+
+
+// --- copy constructor --- //
+// gets called when you dont yet have the object
+template <typename E>
+SSLL<E>::SSLL(SSLL& src)
+{
+  // std::cout << "Copy constructor called" << std::endl;
+  head = nullptr;
+  tail = nullptr;
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+}
+
+// -- copy assignment operator --- //
+// gets called if you already have an instance of the object
+template <typename E>
+SSLL<E>& SSLL<E>::operator=(SSLL& src)
+{
+  // std::cout << "Copy assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  while(head){
+    Node_ssll<E> *prev = head;
+    head = head->next;
+    delete prev;
+  }
+
+  // copy over new list
+  head = nullptr;
+  tail = nullptr;
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+
+  return *this;
+}
+
+// --- move constructor --- //
+template <typename E>
+SSLL<E>::SSLL(SSLL&& src)
+{
+  // std::cout << "Move constructor called!" << std::endl;
+  // head = nullptr;
+  // tail = nullptr;
+  head = src.head;
+  tail = src.tail;
+  src.head = nullptr;
+  src.tail = nullptr;
+}
+
+// --- move assignment operator --- //
+template <typename E>
+SSLL<E>& SSLL<E>::operator=(SSLL&& src)
+{
+  // std::cout << "Move assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  while(head){
+    Node_ssll<E> *prev = head;
+    head = head->next;
+    delete prev;
+  }
+
+  // move items over
+  head = src.head;
+  tail = src.tail;
+  src.head = nullptr;
+  src.tail = nullptr;
+
+  return *this;
+
+}
+
+
 
 
 // --- push_front --- //

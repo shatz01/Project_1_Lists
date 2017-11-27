@@ -20,6 +20,10 @@ class CDAL : public List<E>
 public:
   CDAL();
   ~CDAL();
+  CDAL(CDAL& src);
+  CDAL& operator=(CDAL& src);
+  CDAL(CDAL&& src);
+  CDAL& operator=(CDAL&& src);
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -37,7 +41,7 @@ public:
   E* contents();
   void print(std::ostream & out);
   bool contains(E elt, bool (*equals_fn)(const E &a, const E &b));
-// private:
+private:
   void print_contents(); // prints the array returned from contents
   Node_cdal<E>* node_at(int index);
   int num_nodes();
@@ -166,6 +170,137 @@ CDAL<E>::~CDAL()
     delete previous;
   }
 }
+
+
+
+// --- copy constructor --- //
+// gets called when you dont yet have the object
+template <typename E>
+CDAL<E>::CDAL(CDAL& src)
+{
+  // std::cout << "Copy constructor called" << std::endl;
+  Node_cdal<E> *temp = new Node_cdal<E>;
+  temp->next = nullptr;
+  temp->prev = nullptr;
+  head = 0;
+  tail = 0;
+  head_node = temp;
+
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+}
+
+// -- copy assignment operator --- //
+// gets called if you already have an instance of the object
+template <typename E>
+CDAL<E>& CDAL<E>::operator=(CDAL& src)
+{
+  // std::cout << "Copy assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  Node_cdal<E> *last_node = head_node;
+  while(last_node->next != nullptr)
+  {
+    last_node = last_node->next;
+  }
+
+  while(last_node->prev != nullptr){
+    last_node = last_node->prev;
+    delete[] last_node->next->data;
+    delete last_node->next;
+  }
+
+  // now just delete the head_node
+  delete[] head_node->data;
+
+  // now make a new start to the CDAL
+  Node_cdal<E> *temp = new Node_cdal<E>;
+  temp->next = nullptr;
+  temp->prev = nullptr;
+  head = 0;
+  tail = 0;
+  head_node = temp;
+
+  // copy over new list
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+
+  return *this;
+}
+
+// --- move constructor --- //
+template <typename E>
+CDAL<E>::CDAL(CDAL&& src)
+{
+  // std::cout << "Move constructor called!" << std::endl;
+  // head = nullptr;
+  // tail = nullptr;
+
+  head = src.head;
+  tail = src.tail;
+  head_node = src.head_node;
+
+  src.head = 0;
+  src.tail = 0;
+  Node_cdal<E> *temp = new Node_cdal<E>;
+  temp->next = nullptr;
+  temp->prev = nullptr;
+  src.head_node = temp;
+}
+
+// --- move assignment operator --- //
+template <typename E>
+CDAL<E>& CDAL<E>::operator=(CDAL&& src)
+{
+  // std::cout << "Move assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  Node_cdal<E> *last_node = head_node;
+  while(last_node->next != nullptr)
+  {
+    last_node = last_node->next;
+  }
+
+  while(last_node->prev != nullptr){
+    last_node = last_node->prev;
+    delete[] last_node->next->data;
+    delete last_node->next;
+  }
+
+  // now just delete the head_node
+  delete[] head_node->data;
+
+  // move items over
+  head = src.head;
+  tail = src.tail;
+  head_node = src.head_node;
+
+  src.head = 0;
+  src.tail = 0;
+  Node_cdal<E> *temp = new Node_cdal<E>;
+  temp->next = nullptr;
+  temp->prev = nullptr;
+  src.head_node = temp;
+
+  return *this;
+
+}
+
+
+
+
 
 
 
