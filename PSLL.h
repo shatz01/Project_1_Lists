@@ -17,6 +17,10 @@ class PSLL : public List<E>
 public:
   PSLL();
   ~PSLL();
+  PSLL(PSLL& src);
+  PSLL& operator=(PSLL& src);
+  PSLL(PSLL&& src);
+  PSLL& operator=(PSLL&& src);
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -144,6 +148,88 @@ PSLL<E>::~PSLL()
   }
 }
 
+// --- copy constructor --- //
+// gets called when you dont yet have the object
+template <typename E>
+PSLL<E>::PSLL(PSLL& src)
+{
+  // std::cout << "Copy constructor called" << std::endl;
+  head = nullptr;
+  tail = nullptr;
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+}
+
+// -- copy assignment operator --- //
+// gets called if you already have an instance of the object
+template <typename E>
+PSLL<E>& PSLL<E>::operator=(PSLL& src)
+{
+  // std::cout << "Copy assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  while(head){
+    Node_psll<E> *prev = head;
+    head = head->next;
+    delete prev;
+  }
+
+  // copy over new list
+  head = nullptr;
+  tail = nullptr;
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+
+  return *this;
+}
+
+// --- move constructor --- //
+template <typename E>
+PSLL<E>::PSLL(PSLL&& src)
+{
+  // std::cout << "Move constructor called!" << std::endl;
+  // head = nullptr;
+  // tail = nullptr;
+  head = src.head;
+  tail = src.tail;
+  src.head = nullptr;
+  src.tail = nullptr;
+}
+
+// --- move assignment operator --- //
+template <typename E>
+PSLL<E>& PSLL<E>::operator=(PSLL&& src)
+{
+  // std::cout << "Move assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  while(head){
+    Node_psll<E> *prev = head;
+    head = head->next;
+    delete prev;
+  }
+
+  // move items over
+  head = src.head;
+  tail = src.tail;
+  src.head = nullptr;
+  src.tail = nullptr;
+
+  return *this;
+
+}
 
 
 // --- is_empty --- //

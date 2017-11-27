@@ -18,6 +18,10 @@ public:
   CBL();
   CBL(int sz);
   ~CBL();
+  CBL(CBL& src);
+  CBL& operator=(CBL& src);
+  CBL(CBL&& src);
+  CBL& operator=(CBL&& src);
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -153,6 +157,102 @@ CBL<E>::~CBL()
 {
   delete [] data;
 }
+
+
+
+// --- copy constructor --- //
+// gets called when you dont yet have the object
+template <typename E>
+CBL<E>::CBL(CBL& src)
+{
+  // std::cout << "Copy constructor called" << std::endl;
+
+  head = 0;
+  tail = 0;
+  mx_sz = src.mx_sz;
+  data = new E[mx_sz + 1];
+
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+}
+
+// -- copy assignment operator --- //
+// gets called if you already have an instance of the object
+template <typename E>
+CBL<E>& CBL<E>::operator=(CBL& src)
+{
+  // std::cout << "Copy assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  delete [] data;
+
+  // copy over new list
+  head = 0;
+  tail = 0;
+  mx_sz = src.mx_sz;
+  data = new E[mx_sz + 1];
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+
+  return *this;
+}
+
+// --- move constructor --- //
+template <typename E>
+CBL<E>::CBL(CBL&& src)
+{
+  // std::cout << "Move constructor called!" << std::endl;
+  head = src.head;
+  tail = src.tail;
+  mx_sz = src.mx_sz;
+  data = src.data;
+
+  delete [] src.data;
+  src.head = 0;
+  src.tail = 0;
+  src.mx_sz = 50;
+  src.data = new E[mx_sz + 1];
+}
+
+// --- move assignment operator --- //
+template <typename E>
+CBL<E>& CBL<E>::operator=(CBL&& src)
+{
+  // std::cout << "Move assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  delete [] data;
+
+  // move items over
+  head = src.head;
+  tail = src.tail;
+  mx_sz = src.mx_sz;
+  data = src.data;
+
+  delete [] src.data;
+  src.head = 0;
+  src.tail = 0;
+  src.mx_sz = 50;
+  src.data = new E[mx_sz + 1];
+
+  return *this;
+
+}
+
+
+
 
 
 // --- specified constructor --- //

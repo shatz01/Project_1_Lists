@@ -12,6 +12,10 @@ public:
   SDAL();
   SDAL(int sz);
   ~SDAL();
+  SDAL(SDAL& src);
+  SDAL& operator=(SDAL& src);
+  SDAL(SDAL&& src);
+  SDAL& operator=(SDAL&& src);
   void insert (E elt, int pos);
   void push_front(E elt);
   void push_back(E elt);
@@ -143,6 +147,92 @@ SDAL<E>::~SDAL()
 {
   delete [] data;
 }
+
+
+// --- copy constructor --- //
+// gets called when you dont yet have the object
+template <typename E>
+SDAL<E>::SDAL(SDAL& src)
+{
+  std::cout << "Copy constructor called" << std::endl;
+  tail = 0;
+  mx_sz = src.mx_sz;
+  initial_mx_sz = src.initial_mx_sz;
+  data = new E[mx_sz + 1];
+
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+}
+
+// -- copy assignment operator --- //
+// gets called if you already have an instance of the object
+template <typename E>
+SDAL<E>& SDAL<E>::operator=(SDAL& src)
+{
+  std::cout << "Copy assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  delete [] data;
+
+  // copy over new list
+  tail = 0;
+  mx_sz = src.mx_sz;
+  initial_mx_sz = src.initial_mx_sz;
+  data = new E[mx_sz + 1];
+  for (auto ptr : src) {
+    this->push_back(ptr);
+  }
+
+  return *this;
+}
+
+// --- move constructor --- //
+template <typename E>
+SDAL<E>::SDAL(SDAL&& src)
+{
+  std::cout << "Move constructor called!" << std::endl;
+  tail = src.tail;
+  mx_sz = src.mx_sz;
+  initial_mx_sz = src.initial_mx_sz;
+  data = src.data;
+
+  src.tail = 0;
+  src.data = new E[src.mx_sz + 1];
+}
+
+// --- move assignment operator --- //
+template <typename E>
+SDAL<E>& SDAL<E>::operator=(SDAL&& src)
+{
+  std::cout << "Move assignment operator called" << std::endl;
+
+  // check for self assignment
+  if (this == &src) {
+    return *this;
+  }
+
+  // delete the existing list
+  delete [] data;
+
+  // move items over
+  tail = src.tail;
+  mx_sz = src.mx_sz;
+  initial_mx_sz = src.initial_mx_sz;
+  data = src.data;
+
+  src.tail = 0;
+  src.data = new E[src.mx_sz + 1];
+
+  return *this;
+
+}
+
 
 // --- push_front --- //
 template <typename E>
